@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mak Software | Agentic AI Development & IT Consulting</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide Icons for professional visuals -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Custom font import (Inter is Tailwind's default) */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Minimalistic Deep Dark Theme */
+            background-color: #0d1117; /* GitHub Dark-like background */
+            color: #c9d1d9; /* Light gray text for high contrast */
+        }
+        /* Custom scrollbar styling */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb {
+            background-color: #2f81f7; /* Primary Blue Accent */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-track { background-color: #161b22; }
+
+        /* General element styling for a clean look */
+        .card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            /* Added transition for smoother button visibility effect */
+            transition: all 0.2s ease;
+        }
+        .card:hover {
+            border-color: #2f81f7;
+            transform: translateY(-2px);
+        }
+        .pricing-card-highlight {
+            border-color: #2f81f7;
+            background-color: #1f2834;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+<!-- Header & Navigation -->
+<header class="sticky top-0 z-50 bg-[#0d1117]/95 backdrop-blur-sm border-b border-[#30363d]">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-4">
+        <!-- Logo -->
+        <a href="#home" class="flex items-center p-1 rounded-lg">
+            <img src="logo.jpg"
+                 alt="Mak Software Logo"
+                 class="h-10 w-auto"
+                 style="object-fit: contain;">
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex space-x-6 text-sm font-medium items-center">
+            <a href="#home" class="py-2 text-white hover:text-[#2f81f7] transition duration-150">Home</a>
+            <a href="#services" class="py-2 text-white hover:text-[#2f81f7] transition duration-150">Services</a>
+            <a href="#products" class="py-2 text-white hover:text-[#2f81f7] transition duration-150">Products</a>
+            <a href="#ai" class="py-2 text-white hover:text-[#2f81f7] transition duration-150">AI Lab</a>
+            <a href="#pricing" class="py-2 text-white hover:text-[#2f81f7] transition duration-150">Pricing</a>
+            <!-- Header button styled as a button for visual appeal -->
+            <a href="#contact" class="inline-flex items-center justify-center px-3 py-1.5 text-sm font-semibold rounded-lg bg-[#2f81f7] hover:bg-[#3888ff] text-white transition duration-300">
+                Get Started
+            </a>
+        </nav>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 text-white hover:text-[#2f81f7] transition duration-150" aria-label="Toggle Menu">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+    </div>
+
+    <!-- Mobile Menu Dropdown -->
+    <nav id="mobile-menu" class="hidden md:hidden absolute w-full bg-[#161b22] shadow-lg py-2 border-t border-[#30363d]">
+        <a href="#home" class="block px-4 py-2 text-white hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">Home</a>
+        <a href="#services" class="block px-4 py-2 text-white hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">Services</a>
+        <a href="#products" class="block px-4 py-2 text-white hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">Products</a>
+        <a href="#ai" class="block px-4 py-2 text-white hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">AI Lab</a>
+        <a href="#pricing" class="block px-4 py-2 text-white hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">Pricing</a>
+        <a href="#contact" class="block px-4 py-2 text-[#2f81f7] hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">Get Started</a>
+    </nav>
+</header>
+
+<main>
+    <!-- 1. Hero Section -->
+    <section id="home" class="min-h-[80vh] flex items-center justify-center text-center px-4 pt-20 pb-12">
+        <div class="max-w-4xl space-y-6">
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-tight text-white">
+                <span class="text-[#2f81f7]">Smart Software</span> for the Next Generation.
+            </h1>
+            <p class="text-lg sm:text-xl text-gray-400 font-light max-w-3xl mx-auto">
+                We deliver high-impact <strong>Agentic AI</strong>, strategic IT consulting, and provide elite software talent on contract.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 pt-4">
+                <a href="#products" class="inline-flex items-center justify-center px-7 py-3 text-base font-semibold rounded-lg bg-[#2f81f7] hover:bg-[#3888ff] text-white transition duration-300">
+                    View Our Products
+                </a>
+                <a href="#services" class="inline-flex items-center justify-center px-7 py-3 text-base font-semibold rounded-lg border border-gray-600 hover:border-[#2f81f7] hover:text-[#2f81f7] transition duration-300 text-gray-400">
+                    View All Services
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Services Section -->
+    <section id="services" class="py-16 sm:py-24 bg-[#161b22]">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-[#2f81f7] font-semibold uppercase tracking-widest text-sm">Our Focus</span>
+                <h2 class="text-3xl sm:text-4xl font-bold mt-2 text-white">Core Capabilities</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Service Card 1: IT Consulting -->
+                <div class="card p-6 rounded-xl">
+                    <i data-lucide="layout-grid" class="w-8 h-8 text-[#2f81f7] mb-4"></i>
+                    <h3 class="text-lg font-semibold mb-2 text-white">Strategic IT Consulting</h3>
+                    <p class="text-gray-400 text-sm">
+                        Architecture, digital strategy, and technical roadmap development to ensure maximum ROI.
+                    </p>
+                </div>
+
+                <!-- Service Card 2: Contract Development -->
+                <div class="card p-6 rounded-xl">
+                    <i data-lucide="code-2" class="w-8 h-8 text-[#2f81f7] mb-4"></i>
+                    <h3 class="text-lg font-semibold mb-2 text-white">Custom Software Builds</h3>
+                    <p class="text-gray-400 text-sm">
+                        Rapid, high-quality development of web, mobile, and cloud applications on contract.
+                    </p>
+                </div>
+
+                <!-- Service Card 3: IT Recruitment / Staffing -->
+                <div class="card p-6 rounded-xl">
+                    <i data-lucide="users" class="w-8 h-8 text-[#2f81f7] mb-4"></i>
+                    <h3 class="text-lg font-semibold mb-2 text-white">Elite Contract Talent</h3>
+                    <p class="text-gray-400 text-sm">
+                        Connecting you with experienced Developers, PMs, and QA professionals for your short-term and long needs.
+                    </p>
+                </div>
+
+                <!-- Service Card 4: Agentic AI -->
+                <div class="card p-6 rounded-xl">
+                    <i data-lucide="lightbulb" class="w-8 h-8 text-[#2f81f7] mb-4"></i>
+                    <h3 class="text-lg font-semibold mb-2 text-white">Agentic Automation</h3>
+                    <p class="text-gray-400 text-sm">
+                        Building autonomous AI agents to handle complex, multi-step business logic.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Products Section (NEW) -->
+    <section id="products" class="py-16 sm:py-24">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-[#2f81f7] font-semibold uppercase tracking-widest text-sm">Our Solutions</span>
+                <h2 class="text-3xl sm:text-4xl font-bold mt-2 text-white">Market-Ready Software Products</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+
+                <!-- Product 1: Health 360 -->
+                <div class="card p-6 rounded-xl text-center">
+                    <i data-lucide="heart-pulse" class="w-8 h-8 text-red-500 mb-3 mx-auto"></i>
+                    <h3 class="text-lg font-semibold mb-1 text-white">Health 360</h3>
+                    <p class="text-gray-400 text-xs">Comprehensive health management platform.</p>
+                </div>
+
+                <!-- Product 2: HRMS -->
+                <div class="card p-6 rounded-xl text-center">
+                    <i data-lucide="clipboard-list" class="w-8 h-8 text-yellow-500 mb-3 mx-auto"></i>
+                    <h3 class="text-lg font-semibold mb-1 text-white">HRMS</h3>
+                    <p class="text-gray-400 text-xs">Integrated Human Resource Management System.</p>
+                </div>
+
+                <!-- Product 3: Traveler -->
+                <div class="card p-6 rounded-xl text-center">
+                    <i data-lucide="plane" class="w-8 h-8 text-green-500 mb-3 mx-auto"></i>
+                    <h3 class="text-lg font-semibold mb-1 text-white">Traveler</h3>
+                    <p class="text-gray-400 text-xs">Travel booking and itinerary planning software.</p>
+                </div>
+
+                <!-- Product 4: Social -->
+                <div class="card p-6 rounded-xl text-center">
+                    <i data-lucide="message-square" class="w-8 h-8 text-pink-500 mb-3 mx-auto"></i>
+                    <h3 class="text-lg font-semibold mb-1 text-white">Social</h3>
+                    <p class="text-gray-400 text-xs">Next-generation community engagement tools.</p>
+                </div>
+
+                <!-- Product 5: AI -->
+                <div class="card p-6 rounded-xl text-center">
+                    <i data-lucide="cpu" class="w-8 h-8 text-[#2f81f7] mb-3 mx-auto"></i>
+                    <h3 class="text-lg font-semibold mb-1 text-white">AI</h3>
+                    <p class="text-gray-400 text-xs">Custom machine learning and automation tools.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- 4. Agentic AI Development Focus (Includes LLM Feature) -->
+    <section id="ai" class="py-16 sm:py-24 bg-[#161b22]">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="lg:flex lg:items-start lg:space-x-12">
+                <div class="lg:w-1/2 mb-10 lg:mb-0">
+                    <i data-lucide="zap" class="w-10 h-10 text-[#2f81f7] mb-4"></i>
+                    <span class="text-[#2f81f7] font-semibold uppercase tracking-widest text-sm">AI Innovation</span>
+                    <h2 class="text-3xl sm:text-4xl font-bold mt-2 text-white leading-tight">
+                        The Agentic AI Advantage
+                    </h2>
+                    <p class="mt-4 text-lg text-gray-400">
+                        Our agents don't just respond, they act. They manage dependencies, utilize tools, and independently pursue defined business outcomes.
+                    </p>
+                    <div class="mt-6 space-y-3 text-gray-400">
+                        <div class="flex items-center">
+                            <i data-lucide="dot" class="w-6 h-6 text-green-400 mr-2 flex-shrink-0"></i>
+                            <strong>Goal-Driven Autonomy</strong>
+                        </div>
+                        <div class="flex items-center">
+                            <i data-lucide="dot" class="w-6 h-6 text-green-400 mr-2 flex-shrink-0"></i>
+                            <strong>Tool Integration (APIs, Databases, Web)</strong>
+                        </div>
+                        <div class="flex items-center">
+                            <i data-lucide="dot" class="w-6 h-6 text-green-400 mr-2 flex-shrink-0"></i>
+                            <strong>Complex Planning Capabilities</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LLM-Powered Feature (AI Brainstormer) -->
+                <div class="lg:w-1/2 p-6 card rounded-2xl">
+                    <h3 class="text-xl font-bold mb-4 text-[#2f81f7]">
+                        🤖 Agent Idea Generator
+                    </h3>
+                    <p class="text-sm text-gray-400 mb-4">
+                        Test our capability: Describe a business challenge and instantly get a high-level Agentic AI solution structure.
+                    </p>
+
+                    <textarea id="ai-prompt" rows="3" class="w-full p-3 rounded-lg bg-[#0d1117] border border-gray-700 text-white placeholder-gray-500 focus:ring-[#2f81f7] focus:border-[#2f81f7] transition duration-150" placeholder="e.g., 'Automate inventory reordering in volatile markets.' or 'Personalize email marketing segments based on real-time behavior.'"></textarea>
+
+                    <button id="ai-generate-btn" class="w-full mt-4 flex items-center justify-center space-x-2 px-4 py-3 bg-[#2f81f7] text-white font-semibold rounded-lg hover:bg-[#3888ff] transition duration-300" disabled>
+                        <i data-lucide="cpu" class="w-5 h-5"></i>
+                        <span>Generate Solution Blueprint</span>
+                    </button>
+
+                    <!-- Output Area -->
+                    <div id="ai-output-container" class="mt-6 p-4 bg-[#0d1117] rounded-xl border border-gray-700 hidden">
+                        <h4 class="text-base font-semibold mb-2 text-white">Suggested AI Agent Strategy:</h4>
+                        <div id="ai-output-loading" class="text-[#2f81f7] text-center py-4 hidden">
+                            <i data-lucide="loader-circle" class="w-6 h-6 animate-spin mx-auto"></i>
+                            <p class="mt-2 text-sm">Mak Software AI is strategizing...</p>
+                        </div>
+                        <p id="ai-output-text" class="text-gray-300 whitespace-pre-wrap text-sm"></p>
+                        <div id="ai-sources" class="mt-3 pt-3 border-t border-gray-700 text-xs text-gray-500 hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Why Choose Us Section (Talent & Contract Focus) -->
+    <section id="whyus" class="py-16 sm:py-24">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <span class="text-[#2f81f7] font-semibold uppercase tracking-widest text-sm">Why Choose Mak Software</span>
+            <h2 class="text-3xl sm:text-4xl font-bold mt-2 text-white">Efficient, Experienced, and Flexible</h2>
+            <p class="mt-4 text-lg text-gray-400 max-w-4xl mx-auto">
+                We deliver the quality of a large enterprise team with the agility and focused attention of a boutique firm.
+            </p>
+
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Feature 1: Efficiency -->
+                <div class="p-6 card rounded-xl">
+                    <i data-lucide="clock" class="w-7 h-7 text-[#2f81f7] mb-3 mx-auto"></i>
+                    <h3 class="text-lg font-semibold mb-2 text-white">Lean Operations</h3>
+                    <p class="text-gray-400 text-sm">
+                        No bloated overhead. Direct engagement with senior specialists results in faster deployment.
+                    </p>
+                </div>
+
+                <!-- Feature 2: Experience -->
+                <div class="p-6 card rounded-xl">
+                    <i data-lucide="graduation-cap" class="w-7 h-7 text-[#2f81f7] mb-3 mx-auto"></i>
+                    <h3 class="text-lg font-semibold mb-2 text-white">Senior Expertise</h3>
+                    <p class="text-gray-400 text-sm">
+                        Every team member is a proven expert, ensuring robust, scalable, and maintainable code.
+                    </p>
+                </div>
+
+                <!-- Feature 3: Flexibility -->
+                <div class="p-6 card rounded-xl">
+                    <i data-lucide="shuffle" class="w-7 h-7 text-[#2f81f7] mb-3 mx-auto"></i>
+                    <h3 class="text-lg font-semibold mb-2 text-white">Contractual Flexibility</h3>
+                    <p class="text-gray-400 text-sm">
+                        Scale resources instantly to match project demands without long-term hiring commitments.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Pricing Section (NEW) -->
+    <section id="pricing" class="py-16 sm:py-24 bg-[#161b22]">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-[#2f81f7] font-semibold uppercase tracking-widest text-sm">Transparent Costing</span>
+                <h2 class="text-3xl sm:text-4xl font-bold mt-2 text-white">Flexible Hourly Rates</h2>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+
+                <!-- Pricing Card 1: Basic (Hover to reveal button) -->
+                <div class="card p-6 rounded-xl flex flex-col items-center group">
+                    <h3 class="text-xl font-bold text-white mb-2">Basic</h3>
+                    <div class="flex items-baseline mb-6 space-x-1">
+                        <p class="text-4xl font-extrabold text-[#2f81f7]">$12</p>
+                        <p class="text-gray-400 text-sm font-medium">/ hour</p>
+                    </div>
+                    <p class="text-gray-400 text-center text-sm mb-4">Ideal for small projects and junior support roles.</p>
+                    <!-- Button hidden by default, visible on group hover -->
+                    <a href="#contact" class="w-full px-4 py-2 text-center text-base font-semibold rounded-lg bg-[#2f81f7] hover:bg-[#3888ff] text-white transition duration-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible">
+                        Inquire
+                    </a>
+                </div>
+
+                <!-- Pricing Card 2: Plus (Recommended - Hover to reveal button) -->
+                <div class="card p-6 rounded-xl flex flex-col items-center pricing-card-highlight border-2 group">
+                    <span class="text-xs font-bold text-white bg-[#2f81f7] py-1 px-3 rounded-full mb-3 uppercase">Recommended</span>
+                    <h3 class="text-xl font-bold text-white mb-2">Plus</h3>
+                    <div class="flex items-baseline mb-6 space-x-1">
+                        <p class="text-4xl font-extrabold text-white">$18</p>
+                        <p class="text-gray-400 text-sm font-medium">/ hour</p>
+                    </div>
+                    <p class="text-gray-400 text-center text-sm mb-4">Standard rate for mid-level software development.</p>
+                    <!-- Button hidden by default, visible on group hover -->
+                    <a href="#contact" class="w-full px-4 py-2 text-center text-base font-semibold rounded-lg bg-[#2f81f7] hover:bg-[#3888ff] text-white transition duration-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible">
+                        Get Started
+                    </a>
+                </div>
+
+                <!-- Pricing Card 3: Premium (Hover to reveal button) -->
+                <div class="card p-6 rounded-xl flex flex-col items-center group">
+                    <h3 class="text-xl font-bold text-white mb-2">Premium</h3>
+                    <div class="flex items-baseline mb-6 space-x-1">
+                        <p class="text-4xl font-extrabold text-[#2f81f7]">$25</p>
+                        <p class="text-gray-400 text-sm font-medium">/ hour</p>
+                    </div>
+                    <p class="text-gray-400 text-center text-sm mb-4">For senior architecture, AI strategy, and consulting.</p>
+                    <!-- Button hidden by default, visible on group hover -->
+                    <a href="#contact" class="w-full px-4 py-2 text-center text-base font-semibold rounded-lg bg-[#2f81f7] hover:bg-[#3888ff] text-white transition duration-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible">
+                        Inquire
+                    </a>
+                </div>
+
+                <!-- Pricing Card 4: Custom (Always visible button) -->
+                <div class="card p-6 rounded-xl flex flex-col items-center group">
+                    <h3 class="text-xl font-bold text-white mb-2">Custom</h3>
+                    <div class="flex items-baseline mb-6 space-x-1">
+                        <p class="text-4xl font-extrabold text-[#2f81f7]">$ X</p>
+                        <p class="text-gray-400 text-sm font-medium">/ hour</p>
+                    </div>
+                    <p class="text-gray-400 text-center text-sm mb-4">Fixed-bid projects or long-term partnership rates.</p>
+                    <!-- Blue button style - always visible -->
+                    <a href="#contact" class="w-full px-4 py-2 text-center text-base font-semibold rounded-lg bg-[#2f81f7] hover:bg-[#3888ff] text-white transition duration-300">
+                        Contact Us
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- 7. Contact Section -->
+    <section id="contact" class="py-16 sm:py-24">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-3xl mx-auto bg-[#161b22] p-8 sm:p-10 rounded-2xl border border-[#30363d]">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-white">Get Started with Mak Software</h2>
+                    <p class="mt-2 text-lg text-gray-400">Let's discuss your next project.</p>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Contact Form (Redirect to Google Forms) -->
+                    <div class="p-5 card rounded-xl flex flex-col justify-center items-center text-center">
+                        <i data-lucide="clipboard-list" class="w-8 h-8 text-[#2f81f7] mb-3"></i>
+                        <h3 class="text-xl font-semibold mb-3 text-white">Project Inquiry Form</h3>
+                        <p class="text-gray-400 mb-6 text-sm max-w-sm">
+                            Use our brief inquiry form to provide project details.
+                        </p>
+                        <!-- TODO: REPLACE THE URL BELOW WITH PUBLIC GOOGLE FORM LINK -->
+                        <a href="https://docs.google.com/forms/" target="_blank" class="w-full sm:w-2/3 px-4 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition duration-300">
+                            Open Secure Inquiry Form (Google Forms)
+                        </a>
+                    </div>
+
+                    <!-- Direct Contact Options -->
+                    <div class="p-5 card rounded-xl">
+                        <h3 class="text-lg font-semibold mb-4 text-[#2f81f7]">Direct Connect</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- LinkedIn CTA -->
+                            <a href="https://www.linkedin.com/company/maksoftware" target="_blank" class="flex items-center justify-center p-3 bg-[#0d1117] rounded-lg hover:bg-gray-800 transition duration-300 border border-gray-700 hover:border-[#2f81f7]">
+                                <i data-lucide="linkedin" class="w-5 h-5 mr-3 text-white"></i>
+                                <span class="font-medium text-sm">LinkedIn</span>
+                            </a>
+                            <!-- Email CTA -->
+                            <a href="mailto:connect@maksoftware.in" class="flex items-center justify-center p-3 bg-[#0d1117] rounded-lg hover:bg-gray-800 transition duration-300 border border-gray-700 hover:border-[#2f81f7]">
+                                <i data-lucide="mail" class="w-5 h-5 mr-3 text-white"></i>
+                                <span class="font-medium text-sm">connect@maksoftware.in</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Footer -->
+<footer class="bg-[#161b22] border-t border-[#30363d] mt-12 py-8">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center text-gray-600 text-xs sm:text-sm">
+            <p>&copy; 2025 Mak Software. All rights reserved. | Built for performance and innovation.</p>
+        </div>
+    </div>
+</footer>
+
+
+<script type="module">
+    // --- Firebase/Auth Setup (Mandatory for Gemini API Environment) ---
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Mandatory global variables provided by the environment
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+    let db = null;
+    let auth = null;
+    let isAuthReady = false;
+
+    if (firebaseConfig) {
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        auth = getAuth(app);
+
+        // Authentication setup
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                console.log('Firebase user signed in:', user.uid);
+                isAuthReady = true;
+            } else if (!auth.currentUser) {
+                try {
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                        console.log('Signed in with custom token.');
+                    } else {
+                        await signInAnonymously(auth);
+                        console.log('Signed in anonymously.');
+                    }
+                } catch (error) {
+                    console.error("Firebase Auth failed:", error);
+                }
+            }
+            isAuthReady = true;
+            document.getElementById('ai-generate-btn').disabled = false; // Enable the button once auth is ready
+        });
+    } else {
+        console.error("Firebase configuration is missing.");
+        document.getElementById('ai-generate-btn').disabled = false; // Enable anyway if no auth needed
+    }
+
+    // --- Utility Function for LLM API Calls with Retry ---
+    async function fetchWithRetry(url, options, maxRetries = 3) {
+        for (let i = 0; i < maxRetries; i++) {
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) {
+                    if (response.status === 429 && i < maxRetries - 1) {
+                        const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                        console.warn(`Rate limit hit (429). Retrying in ${delay.toFixed(0)}ms...`);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue;
+                    }
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response;
+            } catch (error) {
+                console.error(`Fetch attempt ${i + 1} failed:`, error);
+                if (i === maxRetries - 1) throw error;
+
+                const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                console.warn(`Request failed. Retrying in ${delay.toFixed(0)}ms...`);
+                await new Promise(resolve => setTimeout(resolve, delay));
+            }
+        }
+    }
+
+    // --- GEMINI API FUNCTION: Agentic AI Idea Generator ---
+    async function generateAgenticIdea(userPrompt) {
+        const apiKey = "";
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+        const systemPrompt = `You are Mak Software's AI Strategist. Your task is to take a high-level business problem and generate a concise, professional, structured three-part proposal for an Agentic AI solution.
+
+The response MUST be formatted EXACTLY like this (using markdown and bolding):
+**1. Proposed Agent:** [Name of the Agent, e.g., Inventory Optimization Agent]
+**2. Core Goal:** [The main business objective this agent achieves.]
+**3. Key Agentic Steps:**
+* [Step 1: First action/tool the agent uses.]
+* [Step 2: Second action/tool.]
+* [Step 3: Third action/tool, leading to the goal.]
+
+Be highly specific and professional.`;
+
+        const payload = {
+            contents: [{ parts: [{ text: userPrompt }] }],
+            systemInstruction: {
+                parts: [{ text: systemPrompt }]
+            },
+            tools: [{ "google_search": {} }], // Use Google Search for grounding
+        };
+
+        const options = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        };
+
+        try {
+            const response = await fetchWithRetry(apiUrl, options);
+            const result = await response.json();
+
+            const candidate = result.candidates?.[0];
+            if (candidate && candidate.content?.parts?.[0]?.text) {
+                return {
+                    text: candidate.content.parts[0].text,
+                    sources: candidate.groundingMetadata?.groundingAttributions || []
+                };
+            }
+            return { text: "Error: Could not generate a valid response. Please try a different prompt.", sources: [] };
+
+        } catch (error) {
+            console.error("Gemini API call failed:", error);
+            return { text: `An API error occurred: ${error.message}. Please check your connection and input.`, sources: [] };
+        }
+    }
+
+
+    // --- Event Listeners and UI Logic ---
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // --- Mobile Menu Toggle Logic ---
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        window.closeMobileMenu = function() {
+            mobileMenu.classList.add('hidden');
+        }
+
+        // --- Smooth Scrolling for all internal links ---
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetSelector = this.getAttribute('href');
+
+                // Prevent default action and skip querySelector for bare '#'
+                if (targetSelector === '#') {
+                    e.preventDefault();
+                    return;
+                }
+
+                e.preventDefault();
+
+                const targetElement = document.querySelector(targetSelector);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // --- AI Brainstormer Interaction ---
+        const promptInput = document.getElementById('ai-prompt');
+        const generateBtn = document.getElementById('ai-generate-btn');
+        const outputContainer = document.getElementById('ai-output-container');
+        const outputText = document.getElementById('ai-output-text');
+        const outputLoading = document.getElementById('ai-output-loading');
+        const outputSources = document.getElementById('ai-sources');
+
+        generateBtn.addEventListener('click', async () => {
+            const prompt = promptInput.value.trim();
+            if (!prompt) {
+                // Using a message box instead of alert()
+                outputText.innerHTML = '<span class="text-red-400">Please enter a business problem to brainstorm an AI solution.</span>';
+                outputContainer.classList.remove('hidden');
+                return;
+            }
+
+            // Show loading state and hide previous results
+            outputContainer.classList.remove('hidden');
+            outputLoading.classList.remove('hidden');
+            outputText.textContent = '';
+            outputSources.innerHTML = '';
+            outputSources.classList.add('hidden');
+            generateBtn.disabled = true;
+
+            try {
+                const result = await generateAgenticIdea(prompt);
+
+                // Display results
+                // Convert markdown structure (like **text**) to HTML bolding
+                let formattedText = result.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                // Convert bullet points to list format for cleaner display
+                formattedText = formattedText.replace(/\* /g, '<br><i data-lucide="chevrons-right" class="inline-block w-4 h-4 mr-2 text-green-400"></i>');
+
+                outputText.innerHTML = formattedText;
+                // Re-initialize Lucide icons for the new output
+                lucide.createIcons();
+
+
+                if (result.sources && result.sources.length > 0) {
+                    const uniqueSources = Array.from(new Set(result.sources.map(s => s.uri)))
+                        .map(uri => result.sources.find(s => s.uri === uri));
+
+                    const sourcesHtml = 'Sources: ' + uniqueSources.map((s, index) =>
+                        `<a href="${s.uri}" target="_blank" class="text-[#2f81f7] hover:underline">${s.title || 'Source'}</a>`
+                    ).join(', ');
+
+                    outputSources.innerHTML = sourcesHtml;
+                    outputSources.classList.remove('hidden');
+                }
+
+            } catch (error) {
+                outputText.textContent = "An unknown API error occurred during processing. Please try again.";
+                console.error("UI error during generation:", error);
+            } finally {
+                outputLoading.classList.add('hidden');
+                generateBtn.disabled = false;
+            }
+        });
+        // Initial check for button state after DOM content loaded (auth will handle the final enabling)
+        if (!isAuthReady) {
+            generateBtn.disabled = true;
+        }
+    });
+</script>
+
+</body>
+</html>
