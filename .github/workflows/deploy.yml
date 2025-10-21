@@ -1,0 +1,50 @@
+# Workflow Name
+name: Deploy Static Site to GitHub Pages
+
+# Controls when the workflow is run
+on:
+  # Triggers the workflow on push events to the 'master' branch
+  push:
+    branches: ["master"]
+  
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions granted to the GITHUB_TOKEN for deployment
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # Single job to build and deploy the site
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    # Use the latest Ubuntu runner
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Step 1: Checks out your repository code
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Step 2: Set up the GitHub Pages environment
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # Step 3: Uploads the content of the 'public' folder as a deployment artifact
+      - name: Upload artifact from public directory
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # This is the crucial line: it tells the action to package only the contents
+          # of the 'public' subdirectory, making it the root of your deployed site.
+          path: './public' 
+
+      # Step 4: Deploys the artifact to GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
