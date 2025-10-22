@@ -615,7 +615,7 @@ Be highly specific and professional.`;
             outputText.textContent = '';
             outputSources.innerHTML = '';
             outputSources.classList.add('hidden');
-            generateBtn.disabled = true;
+            generateBtn.disabled = false;
 
             try {
                 const result = await generateAgenticIdea(prompt);
@@ -652,9 +652,9 @@ Be highly specific and professional.`;
             }
         });
         // Initial check for button state after DOM content loaded (auth will handle the final enabling)
-        if (!isAuthReady) {
-            generateBtn.disabled = true;
-        }
+        // if (!isAuthReady) {
+        //     generateBtn.disabled = true;
+        // }
     });
 </script>
 
