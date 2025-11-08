@@ -11,8 +11,8 @@ Disallow: /*.bak$
 # Optionally disallow CSS and JS files if you have a lot of them, 
 # but generally, Google needs access to these to render the page correctly.
 # Only disallow if you're sure they contain no unique content.
-# Disallow: /*.css$
-# Disallow: /*.js$
+Disallow: /*.css$
+Disallow: /*.js$
 
 # Link to our Sitemap file for faster indexing
 Sitemap: https://www.maksoftware.in/sitemap.xml
