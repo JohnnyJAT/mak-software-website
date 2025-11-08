@@ -1,3 +1,18 @@
-# https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+
+# Directives to disallow specific file types or directories
+# Disallow common administrative/temporary files
+Disallow: /temp/
+Disallow: /cache/
+Disallow: /*.tmp$
+Disallow: /*.bak$
+
+# Optionally disallow CSS and JS files if you have a lot of them, 
+# but generally, Google needs access to these to render the page correctly.
+# Only disallow if you're sure they contain no unique content.
+# Disallow: /*.css$
+# Disallow: /*.js$
+
+# Link to our Sitemap file for faster indexing
+Sitemap: https://www.maksoftware.in/sitemap.xml
