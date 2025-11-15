@@ -1065,16 +1065,55 @@ Be highly specific and professional.`;
 
         let lastFocusedElement;
 
+        // Focus trap handler for modal
+        let focusTrapHandler;
+
         const openModal = () => {
             lastFocusedElement = document.activeElement; // Save current focus
             qrModal.classList.add('flex');
             lucide.createIcons(); // Re-render icons in the modal if needed
             closeModalBtn.focus(); // Move focus to the close button
+
+            // Add focus trap
+            focusTrapHandler = function(event) {
+                if (!qrModal.classList.contains('flex')) return;
+                if (event.key !== 'Tab') return;
+
+                // Get all focusable elements inside the modal
+                const focusableSelectors = [
+                    'button:not([disabled])',
+                    '[href]',
+                    'input:not([disabled])',
+                    'select:not([disabled])',
+                    'textarea:not([disabled])',
+                    '[tabindex]:not([tabindex="-1"])'
+                ];
+                const focusableElements = qrModal.querySelectorAll(focusableSelectors.join(','));
+                const focusable = Array.prototype.slice.call(focusableElements);
+                if (focusable.length === 0) return;
+
+                const first = focusable[0];
+                const last = focusable[focusable.length - 1];
+
+                if (!event.shiftKey && document.activeElement === last) {
+                    event.preventDefault();
+                    first.focus();
+                } else if (event.shiftKey && document.activeElement === first) {
+                    event.preventDefault();
+                    last.focus();
+                }
+            };
+            document.addEventListener('keydown', focusTrapHandler, true);
         };
         const closeModal = () => {
             qrModal.classList.remove('flex');
             if (lastFocusedElement) {
                 lastFocusedElement.focus(); // Return focus to the element that opened the modal
+            }
+            // Remove focus trap
+            if (focusTrapHandler) {
+                document.removeEventListener('keydown', focusTrapHandler, true);
+                focusTrapHandler = null;
             }
         };
 
