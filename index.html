@@ -360,13 +360,36 @@
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
-        #qr-modal { animation: modal-fade-in 0.2s ease-out; }
-        #qr-modal > div {
-            animation: modal-content-pop-in 0.2s ease-out;
+        /* Animation classes for modal open */
+        #qr-modal.modal-animate { animation: modal-fade-in 0.2s ease-out forwards; }
+        #qr-modal.modal-animate > div {
+            animation: modal-content-pop-in 0.2s ease-out forwards;
         }
     </style>
 </head>
 <body class="antialiased bg-white text-gray-800 dark:bg-[#0d1117] dark:text-[#c9d1d9]">
+<script>
+// Modal open/close logic with animation class
+function openQrModal() {
+    var modal = document.getElementById('qr-modal');
+    modal.classList.add('flex');
+    // Trigger animation
+    modal.classList.add('modal-animate');
+    // Remove animation class after animation duration
+    setTimeout(function() {
+        modal.classList.remove('modal-animate');
+    }, 200);
+}
+function closeQrModal() {
+    var modal = document.getElementById('qr-modal');
+    modal.classList.remove('flex');
+    // Optionally remove animation class immediately
+    modal.classList.remove('modal-animate');
+}
+// Example: attach to button
+// document.getElementById('open-qr-btn').onclick = openQrModal;
+// document.getElementById('close-qr-btn').onclick = closeQrModal;
+</script>
 
 <!-- Header & Navigation -->
 <header class="sticky top-0 z-50 bg-white/95 dark:bg-[#0d1117]/95 backdrop-blur-sm border-b border-gray-200 dark:border-[#30363d]">
