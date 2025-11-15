@@ -342,6 +342,28 @@
             /* Added transition for smoother button visibility effect */
             transition: all 0.2s ease;
         }
+        /* QR Code Modal Styles */
+        #qr-modal {
+            display: none; /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+        }
+        #qr-modal.flex {
+            display: flex;
+        }
+        /* Animation for modal backdrop and content */
+        @keyframes modal-fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes modal-content-pop-in {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        #qr-modal { animation: modal-fade-in 0.2s ease-out; }
+        #qr-modal > div {
+            animation: modal-content-pop-in 0.2s ease-out;
+        }
     </style>
 </head>
 <body class="antialiased bg-white text-gray-800 dark:bg-[#0d1117] dark:text-[#c9d1d9]">
@@ -394,7 +416,7 @@
         <a href="#contact" class="block px-4 py-2 text-[#2f81f7] hover:bg-gray-100 dark:hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">Get Started</a>
         <div class="px-4 pt-2 pb-1 border-t border-gray-200 dark:border-gray-700">
             <button id="mobile-theme-toggle" type="button" class="w-full flex items-center justify-between p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span>Switch Theme</span>
+                <span id="mobile-theme-toggle-text">Switch Theme</span>
                 <div class="relative w-5 h-5">
                     <i id="mobile-theme-toggle-dark-icon" data-lucide="moon" class="hidden w-5 h-5"></i>
                     <i id="mobile-theme-toggle-light-icon" data-lucide="sun" class="hidden w-5 h-5"></i>
@@ -733,17 +755,17 @@
                             Connect with Our Experts
                         </a>
                        <!-- QR -->
-                       <a href="/form_qr.png" target="_blank" class="mt-4" title="Open inquiry form">
+                       <button id="open-qr-modal-btn" type="button" class="mt-4" title="Scan QR code">
                            <img id="qr-img"
-                                src="/form_qr.png"
+                                src="form_qr.png"
                                 alt="Inquiry Form QR Code"
-                                title="Open inquiry form"
+                                title="Scan QR code"
                                 class="w-auto block max-h-48"
                                 style="object-fit: contain; max-width:max-content; height:auto; display:inline-block;"
                                 loading="eager"
                                 decoding="async"
-                                onerror="this.onerror=null;this.src='/assets/qr/form_qr.png';">
-                       </a>
+                                onerror="this.onerror=null;this.src='assets/qr/form_qr.png';">
+                       </button>
                     </div>
 
                     <!-- Direct Contact Options -->
@@ -767,6 +789,23 @@
         </div>
     </section>
 </main>
+
+<!-- QR Code Modal -->
+<div id="qr-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" aria-labelledby="qr-modal-title" role="dialog" aria-modal="true">
+    <div class="relative m-4 max-w-xs w-full rounded-2xl bg-white p-6 text-center shadow-xl dark:bg-[#161b22] dark:border dark:border-[#30363d]">
+        <!-- Close Button -->
+        <button id="close-qr-modal-btn" type="button" class="absolute top-2 right-2 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-white rounded-full" aria-label="Close">
+            <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+
+        <h3 id="qr-modal-title" class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Scan to Open on Your Phone</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Use your phone's camera to open the inquiry form.</p>
+
+        <!-- Larger QR Code -->
+        <img src="form_qr.png" alt="Inquiry Form QR Code" class="w-full h-auto rounded-lg mx-auto" loading="lazy">
+
+    </div>
+</div>
 
 <!-- Footer -->
 <footer class="bg-gray-50 dark:bg-[#161b22] border-t border-gray-200 dark:border-[#30363d] mt-12 py-8">
@@ -892,11 +931,11 @@ Be highly specific and professional.`;
                     sources: candidate.groundingMetadata?.groundingAttributions || []
                 };
             }
-            return { text: "Error: Could not generate a valid response. Please try a different prompt.", sources: [] };
+            return { text: "Could not connect to AI Agent, Please try again!", sources: [] };
 
         } catch (error) {
             console.error("Gemini API call failed:", error);
-            return { text: `An API error occurred: ${error.message}. Please check your connection and input.`, sources: [] };
+            return { text: "Could not connect to AI Agent, Please try again!", sources: [] };
         }
     }
 
@@ -914,6 +953,7 @@ Be highly specific and professional.`;
         const logoImg = document.getElementById('logo-img');
         const mobileDarkIcon = document.getElementById('mobile-theme-toggle-dark-icon');
         const mobileLightIcon = document.getElementById('mobile-theme-toggle-light-icon');
+        const mobileThemeText = document.getElementById('mobile-theme-toggle-text');
 
         // Function to update icon visibility
         const updateIcons = () => {
@@ -924,6 +964,7 @@ Be highly specific and professional.`;
                 mobileLightIcon.classList.remove('hidden');
                 mobileDarkIcon.classList.add('hidden');
                 logoImg.src = 'logo_dark_theme.svg'; // Use dark mode logo
+                mobileThemeText.textContent = 'Switch to Light Theme';
                 if (label) {
                     label.textContent = 'Dark';
                     label.classList.remove('text-gray-700');
@@ -935,6 +976,7 @@ Be highly specific and professional.`;
                 mobileLightIcon.classList.add('hidden');
                 mobileDarkIcon.classList.remove('hidden');
                 logoImg.src = 'logo_light_theme.svg'; // Use light mode logo
+                mobileThemeText.textContent = 'Switch to Dark Theme';
                 if (label) {
                     label.textContent = 'Light';
                     label.classList.remove('text-gray-300');
@@ -970,9 +1012,18 @@ Be highly specific and professional.`;
         // --- Mobile Menu Toggle Logic ---
         const menuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
+        const mainContent = document.querySelector('main');
 
-        menuBtn.addEventListener('click', () => {
+        menuBtn.addEventListener('click', (event) => {
+            event.stopPropagation(); // Prevent this click from being caught by the document listener
             mobileMenu.classList.toggle('hidden');
+        });
+
+        // Add a listener to the main content to close the menu when tapped
+        mainContent.addEventListener('click', () => {
+            if (!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+            }
         });
 
         window.closeMobileMenu = function() {
@@ -999,6 +1050,43 @@ Be highly specific and professional.`;
                     });
                 }
             });
+        });
+
+        // --- QR Code Modal Logic ---
+        const qrModal = document.getElementById('qr-modal');
+        const openModalBtn = document.getElementById('open-qr-modal-btn');
+        const closeModalBtn = document.getElementById('close-qr-modal-btn');
+
+        let lastFocusedElement;
+
+        const openModal = () => {
+            lastFocusedElement = document.activeElement; // Save current focus
+            qrModal.classList.add('flex');
+            lucide.createIcons(); // Re-render icons in the modal if needed
+            closeModalBtn.focus(); // Move focus to the close button
+        };
+        const closeModal = () => {
+            qrModal.classList.remove('flex');
+            if (lastFocusedElement) {
+                lastFocusedElement.focus(); // Return focus to the element that opened the modal
+            }
+        };
+
+        openModalBtn.addEventListener('click', openModal);
+        closeModalBtn.addEventListener('click', closeModal);
+
+        // Close modal if user clicks outside the content area
+        qrModal.addEventListener('click', (event) => {
+            if (event.target === qrModal) { // Check if the click is on the backdrop itself
+                closeModal();
+            }
+        });
+
+        // Close modal on 'Escape' key press
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && qrModal.classList.contains('flex')) {
+                closeModal();
+            }
         });
 
         // --- AI Brainstormer Interaction ---
@@ -1053,7 +1141,7 @@ Be highly specific and professional.`;
                 }
 
             } catch (error) {
-                outputText.textContent = "An unknown API error occurred during processing. Please try again.";
+                outputText.textContent = "Could not connect to AI Agent, Please try again!";
                 console.error("UI error during generation:", error);
             } finally {
                 outputLoading.classList.add('hidden');
