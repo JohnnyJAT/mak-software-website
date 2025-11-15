@@ -1019,9 +1019,15 @@ Be highly specific and professional.`;
             mobileMenu.classList.toggle('hidden');
         });
 
-        // Add a listener to the main content to close the menu when tapped
-        mainContent.addEventListener('click', () => {
-            if (!mobileMenu.classList.contains('hidden')) {
+        // Add a document-level click listener to close the menu when clicking outside the menu and menu button
+        document.addEventListener('click', (event) => {
+            const target = event.target;
+            // Only close if menu is open and click is outside both menu and menu button
+            if (
+                !mobileMenu.classList.contains('hidden') &&
+                !mobileMenu.contains(target) &&
+                !menuBtn.contains(target)
+            ) {
                 mobileMenu.classList.add('hidden');
             }
         });
