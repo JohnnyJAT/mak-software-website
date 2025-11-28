@@ -914,27 +914,10 @@ function closeQrModal() {
 
     // --- GEMINI API FUNCTION: Agentic AI Idea Generator ---
     async function generateAgenticIdea(userPrompt) {
-        const apiKey = "";
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-
-        const systemPrompt = `You are Mak Software's AI Strategist. Your task is to take a high-level business problem and generate a concise, professional, structured three-part proposal for an Agentic AI solution.
-
-The response MUST be formatted EXACTLY like this (using markdown and bolding):
-**1. Proposed Agent:** [Name of the Agent, e.g., Inventory Optimization Agent]
-**2. Core Goal:** [The main business objective this agent achieves.]
-**3. Key Agentic Steps:**
-* [Step 1: First action/tool the agent uses.]
-* [Step 2: Second action/tool.]
-* [Step 3: Third action/tool, leading to the goal.]
-
-Be highly specific and professional.`;
+        const apiUrl = `http://20.41.107.226:3000/api/ai`;
 
         const payload = {
-            contents: [{ parts: [{ text: userPrompt }] }],
-            systemInstruction: {
-                parts: [{ text: systemPrompt }]
-            },
-            tools: [{ "google_search": {} }], // Use Google Search for grounding
+            prompt: userPrompt
         };
 
         const options = {
@@ -947,17 +930,24 @@ Be highly specific and professional.`;
             const response = await fetchWithRetry(apiUrl, options);
             const result = await response.json();
 
-            const candidate = result.candidates?.[0];
-            if (candidate && candidate.content?.parts?.[0]?.text) {
+            // 💡 NEW LOGIC: Check for the success flag and the 'response' key returned by your server.
+            if (result.success && result.response) {
                 return {
-                    text: candidate.content.parts[0].text,
-                    sources: candidate.groundingMetadata?.groundingAttributions || []
+                    // The AI text is now directly under the 'response' key
+                    text: result.response,
+                    // The sources array is directly under the 'sources' key
+                    sources: result.sources || []
                 };
             }
-            return { text: "Could not connect to AI Agent, Please try again!", sources: [] };
+
+            // Fallback if 'success' is false or 'response' is missing.
+            return {
+                text: result.error || "Could not connect to AI Agent, Please try again!",
+                sources: []
+            };
 
         } catch (error) {
-            console.error("Gemini API call failed:", error);
+            console.error("API call failed:", error);
             return { text: "Could not connect to AI Agent, Please try again!", sources: [] };
         }
     }
