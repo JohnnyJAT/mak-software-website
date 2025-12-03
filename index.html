@@ -1202,7 +1202,7 @@ function closeQrModal() {
 
             // Add focus trap
             focusTrapHandler = function(event) {
-                if (careerQrModal.classList.contains('hidden')) return;
+                if (!careerQrModal.classList.contains('flex')) return;
                 if (event.key !== 'Tab') return;
 
                 // Get all focusable elements inside the modal
