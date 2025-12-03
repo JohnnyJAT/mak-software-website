@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 
-# Disallow crawling of specific directories and file types
+# Disallow crawling of specific directories and file types, administrative and temporary files
 Disallow: /temp/
 Disallow: /cache/
 Disallow: /api/
