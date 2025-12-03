@@ -365,6 +365,17 @@
         #qr-modal.modal-animate > div {
             animation: modal-content-pop-in 0.2s ease-out forwards;
         }
+        /* Career QR Code Modal Styles */
+        #career-qr-modal {
+            display: none; /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+        }
+        #career-qr-modal.flex { display: flex; }
+        /* Animation classes for career modal open */
+        #career-qr-modal.modal-animate { animation: modal-fade-in 0.2s ease-out forwards; }
+        #career-qr-modal.modal-animate > div { animation: modal-content-pop-in 0.2s ease-out forwards; }
+
     </style>
 </head>
 <body class="antialiased bg-white text-gray-800 dark:bg-[#0d1117] dark:text-[#c9d1d9]">
@@ -410,6 +421,7 @@ function closeQrModal() {
             <a href="#products" class="py-2 text-gray-700 dark:text-white hover:text-[#2f81f7] transition duration-150">Products</a>
             <a href="#ai" class="py-2 text-gray-700 dark:text-white hover:text-[#2f81f7] transition duration-150">AI Lab</a>
             <a href="#pricing" class="py-2 text-gray-700 dark:text-white hover:text-[#2f81f7] transition duration-150">Pricing</a>
+            <a href="#" id="open-career-modal-desktop" class="py-2 text-gray-700 dark:text-white hover:text-[#2f81f7] transition duration-150">Careers</a>
             
             <!-- Theme Toggle Button -->
             <button id="theme-toggle" type="button" class="ml-4 p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-700">
@@ -436,6 +448,7 @@ function closeQrModal() {
         <a href="#products" class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">Products</a>
         <a href="#ai" class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">AI Lab</a>
         <a href="#pricing" class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">Pricing</a>
+        <a href="#" id="open-career-modal-mobile" class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-[#1f2834] transition duration-150">Career</a>
         <a href="#contact" class="block px-4 py-2 text-[#2f81f7] hover:bg-gray-100 dark:hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">Get Started</a>
         <div class="px-4 pt-2 pb-1 border-t border-gray-200 dark:border-gray-700">
             <button id="mobile-theme-toggle" type="button" class="w-full flex items-center justify-between p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
@@ -830,6 +843,30 @@ function closeQrModal() {
     </div>
 </div>
 
+<!-- Career QR Code Modal -->
+<div id="career-qr-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" aria-labelledby="career-qr-modal-title" role="dialog" aria-modal="true">
+    <div class="relative m-4 max-w-xs w-full rounded-2xl bg-white p-6 text-center shadow-xl dark:bg-[#161b22] dark:border dark:border-[#30363d]">
+        <!-- Close Button -->
+        <button id="close-career-qr-modal-btn" type="button" class="absolute top-2 right-2 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-white rounded-full" aria-label="Close">
+            <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+
+        <div class="flex items-center justify-center space-x-2 mb-2">
+            <i data-lucide="briefcase" class="w-5 h-5 text-[#2f81f7]"></i>
+            <h3 id="career-qr-modal-title" class="text-lg font-semibold text-gray-900 dark:text-white">We are hiring</h3>
+        </div>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Scan to view our current openings and apply.</p>
+
+        <!-- Larger QR Code (TODO: Replace with your actual career QR code image) -->
+        <img src="form_qr.png" alt="Career Openings QR Code" class="w-full h-auto rounded-lg mx-auto" loading="lazy" onerror="this.onerror=null;this.src='assets/qr/form_qr.png';">
+
+        <!-- Direct Link Button -->
+        <a href="https://forms.office.com/r/7f2XH0SAZU" target="_blank" class="mt-6 inline-block w-full px-4 py-2.5 text-base font-semibold rounded-lg bg-[#2f81f7] hover:bg-[#3888ff] text-white transition duration-300">
+            Apply Now
+        </a>
+    </div>
+</div>
+
 <!-- Footer -->
 <footer class="bg-gray-50 dark:bg-[#161b22] border-t border-gray-200 dark:border-[#30363d] mt-12 py-8">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -1075,14 +1112,19 @@ function closeQrModal() {
         const qrModal = document.getElementById('qr-modal');
         const openModalBtn = document.getElementById('open-qr-modal-btn');
         const closeModalBtn = document.getElementById('close-qr-modal-btn');
+        const careerQrModal = document.getElementById('career-qr-modal');
+        const openCareerModalDesktop = document.getElementById('open-career-modal-desktop');
+        const openCareerModalMobile = document.getElementById('open-career-modal-mobile');
+        const closeCareerModalBtn = document.getElementById('close-career-qr-modal-btn');
 
-        let lastFocusedElement;
+        let qrModalLastFocusedElement;
+        let careerModalLastFocusedElement;
 
         // Focus trap handler for modal
         let focusTrapHandler;
 
         const openModal = () => {
-            lastFocusedElement = document.activeElement; // Save current focus
+            qrModalLastFocusedElement = document.activeElement; // Save current focus
             qrModal.classList.add('flex');
             lucide.createIcons(); // Re-render icons in the modal if needed
             closeModalBtn.focus(); // Move focus to the close button
@@ -1120,8 +1162,8 @@ function closeQrModal() {
         };
         const closeModal = () => {
             qrModal.classList.remove('flex');
-            if (lastFocusedElement) {
-                lastFocusedElement.focus(); // Return focus to the element that opened the modal
+            if (qrModalLastFocusedElement) {
+                qrModalLastFocusedElement.focus(); // Return focus to the element that opened the modal
             }
             // Remove focus trap
             if (focusTrapHandler) {
@@ -1146,6 +1188,70 @@ function closeQrModal() {
                 closeModal();
             }
         });
+
+        // --- Career QR Code Modal Logic ---
+        const openCareerModal = () => {
+            careerModalLastFocusedElement = document.activeElement; // Save current focus
+            careerQrModal.classList.add('flex', 'modal-animate');
+            lucide.createIcons(); // Re-render icons in the modal if needed
+            closeCareerModalBtn.focus(); // Move focus to the close button
+
+            // Remove animation class after it finishes
+            setTimeout(() => {
+                careerQrModal.classList.remove('modal-animate');
+            }, 200);
+
+            // Add focus trap
+            focusTrapHandler = function(event) {
+                if (careerQrModal.classList.contains('hidden')) return;
+                if (event.key !== 'Tab') return;
+
+                // Get all focusable elements inside the modal
+                const focusableSelectors = [
+                    'button:not([disabled])',
+                    '[href]',
+                    'input:not([disabled])',
+                    'select:not([disabled])',
+                    'textarea:not([disabled])',
+                    '[tabindex]:not([tabindex="-1"])'
+                ];
+                const focusableElements = careerQrModal.querySelectorAll(focusableSelectors.join(','));
+                const focusable = Array.prototype.slice.call(focusableElements);
+                if (focusable.length === 0) return;
+
+                const first = focusable[0];
+                const last = focusable[focusable.length - 1];
+
+                if (!event.shiftKey && document.activeElement === last) {
+                    event.preventDefault();
+                    first.focus();
+                } else if (event.shiftKey && document.activeElement === first) {
+                    event.preventDefault();
+                    last.focus();
+                }
+            };
+            document.addEventListener('keydown', focusTrapHandler, true);
+        };
+        const closeCareerModal = () => {
+            careerQrModal.classList.remove('flex');
+            careerQrModal.classList.remove('modal-animate');
+            if (careerModalLastFocusedElement) {
+                careerModalLastFocusedElement.focus(); // Return focus
+            }
+            if (focusTrapHandler) {
+                document.removeEventListener('keydown', focusTrapHandler, true);
+                focusTrapHandler = null;
+            }
+        };
+
+        openCareerModalDesktop.addEventListener('click', openCareerModal);
+        openCareerModalMobile.addEventListener('click', (e) => {
+            openCareerModal();
+            closeMobileMenu(); // Close the mobile nav dropdown
+        });
+        closeCareerModalBtn.addEventListener('click', closeCareerModal);
+        careerQrModal.addEventListener('click', (event) => { if (event.target === careerQrModal) closeCareerModal(); });
+        document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && careerQrModal.classList.contains('flex')) closeCareerModal(); });
 
         // --- AI Brainstormer Interaction ---
         const promptInput = document.getElementById('ai-prompt');
