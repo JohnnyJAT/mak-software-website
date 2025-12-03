@@ -1,16 +1,12 @@
 User-agent: *
 Allow: /
 
-# Directives to disallow specific file types or directories
-# Disallow common administrative/temporary files
+# Disallow crawling of specific directories and file types, administrative and temporary files
 Disallow: /temp/
 Disallow: /cache/
+Disallow: /api/
 Disallow: /*.tmp$
 Disallow: /*.bak$
-
-# Optionally disallow CSS and JS files if you have a lot of them, 
-# but generally, Google needs access to these to render the page correctly.
-
 
 # Link to our Sitemap file for faster indexing
 Sitemap: https://www.maksoftware.in/sitemap.xml
