@@ -7,7 +7,6 @@ Disallow: /cache/
 Disallow: /api/
 Disallow: /*.tmp$
 Disallow: /*.bak$
-Disallow: /*.log$
 
 # Link to our Sitemap file for faster indexing
 Sitemap: https://www.maksoftware.in/sitemap.xml
