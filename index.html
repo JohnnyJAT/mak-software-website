@@ -1246,6 +1246,8 @@ function closeQrModal() {
 
         openCareerModalDesktop.addEventListener('click', openCareerModal);
         openCareerModalMobile.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
             openCareerModal();
             closeMobileMenu(); // Close the mobile nav dropdown
         });
