@@ -1244,8 +1244,12 @@ function closeQrModal() {
             }
         };
 
-        openCareerModalDesktop.addEventListener('click', openCareerModal);
+        openCareerModalDesktop.addEventListener('click', (e) => {
+            e.preventDefault();
+            openCareerModal();
+        });
         openCareerModalMobile.addEventListener('click', (e) => {
+            e.preventDefault();
             openCareerModal();
             closeMobileMenu(); // Close the mobile nav dropdown
         });
