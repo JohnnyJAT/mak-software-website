@@ -858,15 +858,29 @@ function closeQrModal() {
         <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Scan to view our current openings and apply.</p>
 
         <!-- Larger QR Code (career-specific) -->
-        <img src="career_qr.png" alt="Career Openings QR Code" class="w-full h-auto rounded-lg mx-auto" loading="lazy" onerror="this.onerror=null;this.src='assets/qr/career_qr.png';">
+        <img src="career_qr.png" alt="Career Openings QR Code" class="w-full h-auto rounded-lg mx-auto" loading="lazy" onerror="this.onerror=null;this.src='/i4c_careers_qr.png';">
 
-        <!-- Direct Link Button -->
-        <a href="https://forms.office.com/r/7f2XH0SAZU" target="_blank" rel="noopener noreferrer" aria-label="Apply Now (opens in new tab)" class="mt-6 inline-block w-full px-4 py-2.5 text-base font-semibold rounded-lg bg-[#2f81f7] hover:bg-[#3888ff] text-white transition duration-300">
+        <!--Apply Now Button-->
+        <button id="open-career-iframe-btn" type="button" aria-label="Open application form" class="mt-6 inline-block w-full px-4 py-2.5 text-base font-semibold rounded-lg bg-[#2f81f7] hover:bg-[#3888ff] text-white transition duration-300">
             Apply Now
-        </a>
+        </button>
     </div>
 </div>
 
+<!-- Career Iframe Modal -->
+<div id="career-iframe-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="career-iframe-title">
+    <div class="relative w-full max-w-4xl mx-4 my-6 max-h-[90vh] h-[90vh] rounded-2xl bg-white p-4 shadow-xl overflow-hidden dark:bg-[#161b22]">
+        <button id="close-career-iframe-btn" type="button" class="absolute top-3 right-3 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-white rounded-full" aria-label="Close">
+            <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+
+        <h3 id="career-iframe-title" class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Apply — Careers</h3>
+
+        <div class="h-full">
+            <iframe id="career-iframe" width="100%" height="100%" src="https://forms.office.com/r/uXZVEezckV?embed=true" frameborder="0" marginwidth="0" marginheight="0" style="border: none; width:100%; height:100%;" allowfullscreen webkitallowfullscreen mozallowfullscreen msallowfullscreen></iframe>
+        </div>
+    </div>
+</div>
 <!-- Footer -->
 <footer class="bg-gray-50 dark:bg-[#161b22] border-t border-gray-200 dark:border-[#30363d] mt-12 py-8">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -1321,6 +1335,84 @@ function closeQrModal() {
         //     generateBtn.disabled = true;
         // }
     });
+
+    // iFrame Modal Logic for Career Apply Now Button
+    (function() {
+        const openBtn = document.getElementById('open-career-iframe-btn');
+        const modal = document.getElementById('career-iframe-modal');
+        const closeBtn = document.getElementById('close-career-iframe-btn');
+        const iframe = document.getElementById('career-iframe');
+        let lastFocused = null;
+
+        // Preserve original src in data-src and avoid loading it initially
+        const originalSrc = iframe.getAttribute('data-src') || iframe.getAttribute('src') || '';
+        if (!iframe.getAttribute('data-src')) {
+            iframe.setAttribute('data-src', originalSrc);
+            // Prevent initial load until modal opens
+            iframe.src = 'about:blank';
+        }
+
+        function setIframeFreshSrc() {
+            const base = iframe.getAttribute('data-src') || originalSrc;
+            if (!base) return;
+            const sep = base.includes('?') ? '&' : '?';
+            iframe.src = base + sep + 't=' + Date.now();
+        }
+
+        function openCareerIframeModal(e) {
+            if (e) e.preventDefault();
+            lastFocused = document.activeElement;
+            // show modal
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            // ensure icons render
+            if (window.lucide) window.lucide.createIcons();
+            // load fresh iframe content
+            setIframeFreshSrc();
+            // focus for accessibility
+            closeBtn.focus();
+            document.addEventListener('keydown', handleKeyDown, true);
+        }
+
+        function closeCareerIframeModal() {
+            // hide modal
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            // unload iframe to clear state/cache and free memory
+            try { iframe.src = 'about:blank'; } catch (err) { /* ignore */ }
+            if (lastFocused) lastFocused.focus();
+            document.removeEventListener('keydown', handleKeyDown, true);
+        }
+
+        function handleKeyDown(ev) {
+            if (ev.key === 'Escape') {
+                closeCareerIframeModal();
+                return;
+            }
+            if (ev.key === 'Tab') {
+                // Basic focus trap inside modal
+                const focusable = modal.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])');
+                if (!focusable.length) return;
+                const first = focusable[0];
+                const last = focusable[focusable.length - 1];
+                if (ev.shiftKey && document.activeElement === first) {
+                    ev.preventDefault();
+                    last.focus();
+                } else if (!ev.shiftKey && document.activeElement === last) {
+                    ev.preventDefault();
+                    first.focus();
+                }
+            }
+        }
+
+        // Close when clicking on backdrop
+        modal.addEventListener('click', (ev) => {
+            if (ev.target === modal) closeCareerIframeModal();
+        });
+
+        openBtn.addEventListener('click', openCareerIframeModal);
+        closeBtn.addEventListener('click', closeCareerIframeModal);
+    })();
 </script>
 
 </body>
