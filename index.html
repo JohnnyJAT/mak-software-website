@@ -315,6 +315,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Load Lucide Icons for professional visuals -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- NEW: Load Swiper.js for Carousel -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
     <script>
         // Configure Tailwind for class-based dark mode
         tailwind.config = {
@@ -375,6 +378,41 @@
         /* Animation classes for career modal open */
         #career-qr-modal.modal-animate { animation: modal-fade-in 0.2s ease-out forwards; }
         #career-qr-modal.modal-animate > div { animation: modal-content-pop-in 0.2s ease-out forwards; }
+
+        /* Custom Swiper Carousel Styles */
+        .swiper-button-next, .swiper-button-prev {
+            color: #2f81f7 !important;
+            transition: transform 0.2s ease;
+        }
+        .swiper-button-next:hover, .swiper-button-prev:hover {
+            transform: scale(1.1);
+        }
+        .swiper-pagination-bullet-active {
+            background-color: #2f81f7 !important;
+        }
+        .swiper-slide {
+            height: auto; /* Ensure slides have natural height */
+            display: flex;
+            flex-direction: column;
+        }
+        .swiper-wrapper {
+            transition-timing-function: linear !important;
+        }
+
+
+        /* NEW: Infinite Scrolling Marquee for Client Logos */
+        @keyframes scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-100%); }
+        }
+        .scroller {
+            animation: scroll 40s linear infinite;
+        }
+        .scroller-container:hover .scroller {
+            animation-play-state: paused;
+        }
+
+
 
     </style>
 </head>
@@ -448,6 +486,8 @@ function closeQrModal() {
         <a href="#products" class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">Products</a>
         <a href="#ai" class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">AI Lab</a>
         <a href="#pricing" class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">Pricing</a>
+        <a href="#clients" class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">Clients</a>
+        <a href="#testimonials" class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">Testimonials</a>
         <a href="#" id="open-career-modal-mobile" class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-[#1f2834] transition duration-150">Careers</a>
         <a href="#contact" class="block px-4 py-2 text-[#2f81f7] hover:bg-gray-100 dark:hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">Get Started</a>
         <div class="px-4 pt-2 pb-1 border-t border-gray-200 dark:border-gray-700">
@@ -658,6 +698,34 @@ function closeQrModal() {
         </div>
     </section>
 
+    <!-- NEW: Stats Section -->
+    <section id="stats" class="py-16 sm:py-24 bg-gray-50 dark:bg-[#161b22]">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-[#2f81f7] font-semibold uppercase tracking-widest text-lg">Our Impact</span>
+                <h2 class="text-3xl sm:text-4xl font-bold mt-2 text-gray-900 dark:text-white">Driven by Data, Defined by Results</h2>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center max-w-4xl mx-auto">
+                <div>
+                    <p class="text-4xl sm:text-5xl font-extrabold text-[#2f81f7]" data-count="1200000">0</p>
+                    <p class="mt-2 text-sm font-medium text-gray-600 dark:text-gray-400">Leads Generated</p>
+                </div>
+                <div>
+                    <p class="text-4xl sm:text-5xl font-extrabold text-[#2f81f7]" data-count="50">0</p>
+                    <p class="mt-2 text-sm font-medium text-gray-600 dark:text-gray-400">Projects Delivered</p>
+                </div>
+                <div>
+                    <p class="text-4xl sm:text-5xl font-extrabold text-[#2f81f7]" data-count="98">0</p>
+                    <p class="mt-2 text-sm font-medium text-gray-600 dark:text-gray-400">Client Satisfaction</p>
+                </div>
+                <div>
+                    <p class="text-4xl sm:text-5xl font-extrabold text-[#2f81f7]" data-count="20">0</p>
+                    <p class="mt-2 text-sm font-medium text-gray-600 dark:text-gray-400">Expert Developers</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- 5. Why Choose Us Section (Talent & Contract Focus) -->
     <section id="whyus" class="py-16 sm:py-24">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -693,6 +761,100 @@ function closeQrModal() {
                     <p class="text-gray-600 dark:text-gray-400 text-sm">
                         Scale resources instantly to match project demands without long-term hiring commitments.
                     </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW: Clients Section -->
+    <section id="clients" class="py-16 sm:py-24 bg-gray-50 dark:bg-[#161b22]">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-[#2f81f7] font-semibold uppercase tracking-widest text-sm">Our Partners</span>
+                <h2 class="text-3xl sm:text-4xl font-bold mt-2 text-gray-900 dark:text-white">Trusted by Innovative Companies</h2>
+            </div>
+            <div class="flex flex-wrap justify-center items-center gap-x-8 gap-y-6 sm:gap-x-12">
+                <!-- Replace with your client logos. Use SVG for best quality. -->
+                <img src="https://tailwindui.com/img/logos/158x48/transistor-logo-gray-400.svg" alt="Client Logo 1" class="h-8 sm:h-10 opacity-60 hover:opacity-100 transition-opacity duration-300">
+                <img src="https://tailwindui.com/img/logos/158x48/reform-logo-gray-400.svg" alt="Client Logo 2" class="h-8 sm:h-10 opacity-60 hover:opacity-100 transition-opacity duration-300">
+                <img src="https://tailwindui.com/img/logos/158x48/tuple-logo-gray-400.svg" alt="Client Logo 3" class="h-8 sm:h-10 opacity-60 hover:opacity-100 transition-opacity duration-300">
+                <img src="https://tailwindui.com/img/logos/158x48/savvycal-logo-gray-400.svg" alt="Client Logo 4" class="h-8 sm:h-10 opacity-60 hover:opacity-100 transition-opacity duration-300">
+                <img src="https://tailwindui.com/img/logos/158x48/statamic-logo-gray-400.svg" alt="Client Logo 5" class="h-8 sm:h-10 opacity-60 hover:opacity-100 transition-opacity duration-300">
+            <!-- NEW: Scrolling Logo Marquee -->
+            <div class="scroller-container w-full overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]">
+                <div class="scroller flex items-center gap-x-12 sm:gap-x-16">
+                    <!-- Logos are duplicated for a seamless loop -->
+                    <!-- Set 1 -->
+                    <img src="https://tailwindui.com/img/logos/158x48/transistor-logo-gray-400.svg" alt="Transistor" class="h-8 sm:h-10 flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity duration-300">
+                    <img src="https://tailwindui.com/img/logos/158x48/reform-logo-gray-400.svg" alt="Reform" class="h-8 sm:h-10 flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity duration-300">
+                    <img src="https://tailwindui.com/img/logos/158x48/tuple-logo-gray-400.svg" alt="Tuple" class="h-8 sm:h-10 flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity duration-300">
+                    <img src="https://tailwindui.com/img/logos/158x48/savvycal-logo-gray-400.svg" alt="SavvyCal" class="h-8 sm:h-10 flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity duration-300">
+                    <img src="https://tailwindui.com/img/logos/158x48/statamic-logo-gray-400.svg" alt="Statamic" class="h-8 sm:h-10 flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity duration-300">
+                    <!-- Set 2 (Duplicate) -->
+                    <img src="https://tailwindui.com/img/logos/158x48/transistor-logo-gray-400.svg" alt="Transistor" class="h-8 sm:h-10 flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity duration-300" aria-hidden="true">
+                    <img src="https://tailwindui.com/img/logos/158x48/reform-logo-gray-400.svg" alt="Reform" class="h-8 sm:h-10 flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity duration-300" aria-hidden="true">
+                    <img src="https://tailwindui.com/img/logos/158x48/tuple-logo-gray-400.svg" alt="Tuple" class="h-8 sm:h-10 flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity duration-300" aria-hidden="true">
+                    <img src="https://tailwindui.com/img/logos/158x48/savvycal-logo-gray-400.svg" alt="SavvyCal" class="h-8 sm:h-10 flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity duration-300" aria-hidden="true">
+                    <img src="https://tailwindui.com/img/logos/158x48/statamic-logo-gray-400.svg" alt="Statamic" class="h-8 sm:h-10 flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity duration-300" aria-hidden="true">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW: Testimonials Section -->
+    <section id="testimonials" class="py-16 sm:py-24">
+        <div class="container mx-auto px-4 sm:px6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-[#2f81f7] font-semibold uppercase tracking-widest text-sm">Client Feedback</span>
+                <h2 class="text-3xl sm:text-4xl font-bold mt-2 text-gray-900 dark:text-white">What Our Partners Say</h2>
+            </div>
+            <!-- Swiper Carousel Container -->
+            <div class="testimonial-swiper max-w-6xl mx-auto relative overflow-hidden">
+                <div class="swiper-wrapper">
+                    <!-- Testimonial 1 -->
+                    <div class="swiper-slide">
+                        <div class="p-6 card rounded-xl bg-gray-50 dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] flex flex-col h-full hover:border-[#2f81f7] hover:-translate-y-0.5">
+                            <i data-lucide="quote" class="w-8 h-8 text-[#2f81f7] mb-4 opacity-50"></i>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4 flex-grow">"Mak Software's team delivered a robust solution on a tight deadline. Their expertise in AI and flexible contract model was a game-changer for our project."</p>
+                            <div class="mt-auto pt-4 border-t border-gray-200 dark:border-[#30363d]">
+                                <p class="font-semibold text-gray-900 dark:text-white">Jane Doe</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-500">CTO, Innovate Inc.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Testimonial 2 -->
+                    <div class="swiper-slide">
+                        <div class="p-6 card rounded-xl bg-gray-50 dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] flex flex-col h-full hover:border-[#2f81f7] hover:-translate-y-0.5">
+                            <i data-lucide="quote" class="w-8 h-8 text-[#2f81f7] mb-4 opacity-50"></i>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4 flex-grow">"The contract developers we hired through Mak were top-tier. They integrated seamlessly with our team and significantly accelerated our development cycle."</p>
+                            <div class="mt-auto pt-4 border-t border-gray-200 dark:border-[#30363d]">
+                                <p class="font-semibold text-gray-900 dark:text-white">John Smith</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-500">Head of Engineering, TechForward</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Testimonial 3 -->
+                    <div class="swiper-slide">
+                        <div class="p-6 card rounded-xl bg-gray-50 dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] flex flex-col h-full hover:border-[#2f81f7] hover:-translate-y-0.5">
+                            <i data-lucide="quote" class="w-8 h-8 text-[#2f81f7] mb-4 opacity-50"></i>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4 flex-grow">"Their strategic IT consulting helped us navigate a complex cloud migration. The roadmap they provided was clear, concise, and perfectly aligned with our business goals."</p>
+                            <div class="mt-auto pt-4 border-t border-gray-200 dark:border-[#30363d]">
+                                <p class="font-semibold text-gray-900 dark:text-white">Emily White</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-500">VP of Operations, DataCorp</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Testimonial 4 (NEW) -->
+                    <div class="swiper-slide">
+                        <div class="p-6 card rounded-xl bg-gray-50 dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] flex flex-col h-full hover:border-[#2f81f7] hover:-translate-y-0.5">
+                            <i data-lucide="quote" class="w-8 h-8 text-[#2f81f7] mb-4 opacity-50"></i>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4 flex-grow">"The agility and lean operations at Mak Software meant we got our product to market faster than we ever thought possible. A truly efficient partnership."</p>
+                            <div class="mt-auto pt-4 border-t border-gray-200 dark:border-[#30363d]">
+                                <p class="font-semibold text-gray-900 dark:text-white">Sarah Lee</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-500">Founder, StartupX</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -890,6 +1052,8 @@ function closeQrModal() {
     </div>
 </footer>
 
+<!-- NEW: Swiper.js for Carousel -->
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 
 <script type="module">
     // --- Firebase/Auth Setup (Mandatory for Gemini API Environment) ---
@@ -1122,6 +1286,63 @@ function closeQrModal() {
             });
         });
 
+        // --- Animated Counter for Stats Section ---
+        const animateCounter = (element) => {
+            const target = +element.getAttribute('data-count');
+            const duration = 2000; // 2 seconds
+            const stepTime = Math.abs(Math.floor(duration / target));
+            let current = 0;
+
+            const timer = setInterval(() => {
+                current += 1;
+                // Format number with commas and add suffixes
+                if (target > 1000000) {
+                    element.innerText = (current / 1000000).toFixed(1) + 'M+';
+                } else if (target > 1000) {
+                    element.innerText = (current / 1000).toFixed(0) + 'K+';
+                } else if (target > 50) {
+                     element.innerText = current + '%';
+                }
+                else {
+                    element.innerText = current + '+';
+                }
+
+                if (current === 50) {
+                    element.innerText = current + '+';
+                }
+
+                if (current === 20) {
+                    element.innerText = current + '+';
+                }
+
+                if (current >= target) {
+                    clearInterval(timer);
+                    // Set final precise value
+                    if (target >= 1000000) element.innerText = (target / 1000000).toFixed(1) + 'M+';
+                    else if (target >= 1000) element.innerText = Math.floor(target / 1000) + 'K+';
+                    else if (target > 50) element.innerText = target + '%';
+                    else element.innerText = target + '+';
+                }
+            }, stepTime < 1 ? 1 : stepTime); // Ensure stepTime is at least 1ms
+        };
+
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counters = entry.target.querySelectorAll('[data-count]');
+                    counters.forEach(counter => {
+                        animateCounter(counter);
+                    });
+                    statsObserver.unobserve(entry.target); // Animate only once
+                }
+            });
+        }, { threshold: 0.5 }); // Trigger when 50% of the section is visible
+
+        const statsSection = document.getElementById('stats');
+        if (statsSection) {
+            statsObserver.observe(statsSection);
+        }
+
         // --- QR Code Modal Logic ---
         const qrModal = document.getElementById('qr-modal');
         const openModalBtn = document.getElementById('open-qr-modal-btn');
@@ -1334,6 +1555,35 @@ function closeQrModal() {
         // if (!isAuthReady) {
         //     generateBtn.disabled = true;
         // }
+    });
+
+    // --- Swiper Carousel Initialization ---
+    document.addEventListener('DOMContentLoaded', function () {
+        const testimonialSwiper = new Swiper('.testimonial-swiper', {
+            loop: true,
+            freeMode: true,
+            grabCursor: true,
+            slidesPerView: 'auto',
+            spaceBetween: 32, // Corresponds to gap-8
+            autoplay: {
+                delay: 0,
+                disableOnInteraction: false,
+            },
+            speed: 10000, // A high speed value for smooth continuous scroll
+            breakpoints: {
+                640: { slidesPerView: 1.2 },
+                768: { slidesPerView: 2 },
+                1024: { slidesPerView: 3 },
+            }
+        });
+
+        const swiperContainer = document.querySelector('.testimonial-swiper');
+        swiperContainer.addEventListener('mouseenter', () => {
+            testimonialSwiper.autoplay.stop();
+        });
+        swiperContainer.addEventListener('mouseleave', () => {
+            testimonialSwiper.autoplay.start();
+        });
     });
 
     // iFrame Modal Logic for Career Apply Now Button
