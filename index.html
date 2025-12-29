@@ -324,6 +324,16 @@
             darkMode: 'class',
         }
     </script>
+    <script>
+        // Prevent FOUC (Flash of Unstyled Content) by applying theme before page renders
+        (function() {
+            if (localStorage.getItem('color-theme') === 'dark' || (!localStorage.getItem('color-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
     <style>
         /* Custom font import (Inter is Tailwind's default) */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
@@ -484,7 +494,7 @@
             </div>
         </div>
 
-        <h3 id="launch-banner-title" class="text-3xl font-bold mb-3 text-gradient">We are Launching Soon!</h3>
+        <h3 id="launch-banner-title" class="text-3xl font-bold mb-3 text-gradient">MAK HRMS launching soon</h3>
         <p class="text-gray-600 dark:text-gray-300 mb-8 leading-relaxed text-lg">
             Exciting things are on the way. <br>Get ready for a whole new experience.
         </p>
@@ -615,11 +625,12 @@
                  src="logo_light_theme.svg"
                  alt="Mak Software Logo"
                  class="h-10 w-auto"
+                 width="100" height="100"
                  style="object-fit: contain;">
         </a>
 
         <!-- Desktop Navigation -->
-        <nav class="hidden md:flex space-x-4 text-sm font-medium items-center">
+        <nav class="hidden lg:flex space-x-4 text-sm font-medium items-center">
             <a href="#home" class="py-2 text-gray-700 dark:text-white hover:text-[#2f81f7] transition duration-150">Home</a>
             <a href="#services" class="py-2 text-gray-700 dark:text-white hover:text-[#2f81f7] transition duration-150">Services</a>
             <a href="#products" class="py-2 text-gray-700 dark:text-white hover:text-[#2f81f7] transition duration-150">Products</a>
@@ -640,20 +651,18 @@
         </nav>
 
         <!-- Mobile Menu Button -->
-        <button id="mobile-menu-btn" class="md:hidden p-2 text-gray-700 dark:text-white hover:text-[#2f81f7] transition duration-150" aria-label="Toggle Menu">
+        <button id="mobile-menu-btn" class="lg:hidden p-2 text-gray-700 dark:text-white hover:text-[#2f81f7] transition duration-150" aria-label="Toggle Menu">
             <i data-lucide="menu" class="w-6 h-6"></i>
         </button>
     </div>
 
     <!-- Mobile Menu Dropdown -->
-    <nav id="mobile-menu" class="hidden md:hidden absolute w-full bg-white dark:bg-[#161b22] shadow-lg py-2 border-t border-gray-200 dark:border-[#303d3d]">
+    <nav id="mobile-menu" class="hidden lg:hidden absolute w-full bg-white dark:bg-[#161b22] shadow-lg py-2 border-t border-gray-200 dark:border-[#303d3d]">
         <a href="#home" class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">Home</a>
         <a href="#services" class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">Services</a>
         <a href="#products" class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">Products</a>
         <a href="#ai" class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">AI Lab</a>
         <a href="#pricing" class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">Pricing</a>
-        <a href="#clients" class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">Clients</a>
-        <a href="#testimonials" class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">Testimonials</a>
         <a href="#" id="open-career-modal-mobile" class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-[#1f2834] transition duration-150">Careers</a>
         <a href="#contact" class="block px-4 py-2 text-[#2f81f7] hover:bg-gray-100 dark:hover:bg-[#1f2834] transition duration-150" onclick="closeMobileMenu()">Get Started</a>
         <div class="px-4 pt-2 pb-1 border-t border-gray-200 dark:border-gray-700">
@@ -671,11 +680,11 @@
 <main>
     <!-- 1. Hero Section -->
     <section id="home" class="min-h-[80vh] flex items-center justify-center text-center px-4 pt-20 pb-12">
-        <div class="max-w-4xl space-y-6">
-            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-tight text-gray-900 dark:text-white">
+        <div class="max-w-4xl xl:max-w-5xl space-y-6">
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-extrabold leading-tight text-gray-900 dark:text-white">
                 <span class="text-[#2f81f7]">Smart Software</span> for the Next Generation.
             </h1>
-            <p class="text-lg sm:text-xl text-gray-600 dark:text-gray-400 font-light max-w-3xl mx-auto">
+            <p class="text-lg sm:text-xl xl:text-2xl text-gray-600 dark:text-gray-400 font-light max-w-3xl mx-auto">
                 We deliver high-impact <strong>Agentic AI</strong>, strategic IT consulting, and provide elite software talent on contract.
             </p>
             <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 pt-4">
@@ -694,7 +703,7 @@
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <span class="text-[#2f81f7] font-semibold uppercase tracking-widest text-sm">Our Focus</span>
-                <h2 class="text-3xl sm:text-4xl font-bold mt-2 text-gray-900 dark:text-white">Core Capabilities</h2>
+                <h2 class="text-3xl sm:text-4xl xl:text-5xl font-bold mt-2 text-gray-900 dark:text-white">Core Capabilities</h2>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -742,7 +751,7 @@
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <span class="text-[#2f81f7] font-semibold uppercase tracking-widest text-sm">Our Solutions</span>
-                <h2 class="text-3xl sm:text-4xl font-bold mt-2 text-gray-900 dark:text-white">Market-Ready Software Products</h2>
+                <h2 class="text-3xl sm:text-4xl xl:text-5xl font-bold mt-2 text-gray-900 dark:text-white">Market-Ready Software Products</h2>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -776,7 +785,7 @@
                 </div>
 
                 <!-- Second Row: Center 3 products using full-width flex wrapper -->
-                <div class="lg:col-span-4 flex flex-wrap justify-center gap-6">
+                <div class="md:col-span-2 lg:col-span-4 flex flex-wrap justify-center gap-6">
                     <!-- Product 5: Social -->
                     <div class="card p-6 rounded-xl text-center bg-gray-50 dark:bg-[#161b22] border border-gray-200 dark:border-[#303d3d] hover:border-[#2f81f7] hover:-translate-y-0.5 w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)]">
                         <i data-lucide="message-square" class="w-8 h-8 text-pink-500 mb-3 mx-auto"></i>
@@ -811,7 +820,7 @@
                 <div class="lg:w-1/2 mb-10 lg:mb-0">
                     <i data-lucide="zap" class="w-10 h-10 text-[#2f81f7] mb-4"></i>
                     <span class="text-[#2f81f7] font-semibold uppercase tracking-widest text-sm">AI Innovation</span>
-                    <h2 class="text-3xl sm:text-4xl font-bold mt-2 text-gray-900 dark:text-white leading-tight">
+                    <h2 class="text-3xl sm:text-4xl xl:text-5xl font-bold mt-2 text-gray-900 dark:text-white leading-tight">
                         The Agentic AI Advantage
                     </h2>
                     <p class="mt-4 text-lg text-gray-600 dark:text-gray-400">
@@ -869,9 +878,9 @@
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <span class="text-[#2f81f7] font-semibold uppercase tracking-widest text-lg">Our Impact</span>
-                <h2 class="text-3xl sm:text-4xl font-bold mt-2 text-gray-900 dark:text-white">Driven by Data, Defined by Results</h2>
+                <h2 class="text-3xl sm:text-4xl xl:text-5xl font-bold mt-2 text-gray-900 dark:text-white">Driven by Data, Defined by Results</h2>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center max-w-4xl mx-auto">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center max-w-4xl xl:max-w-5xl mx-auto">
                 <div>
                     <p class="text-4xl sm:text-5xl font-extrabold text-[#2f81f7]">5K+</p>
                     <p class="mt-2 text-sm font-medium text-gray-600 dark:text-gray-400">Leads Generated</p>
@@ -896,8 +905,8 @@
     <section id="whyus" class="py-16 sm:py-24">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <span class="text-[#2f81f7] font-semibold uppercase tracking-widest text-sm">Why Choose Mak Software</span>
-            <h2 class="text-3xl sm:text-4xl font-bold mt-2 text-gray-900 dark:text-white">Efficient, Experienced, and Flexible</h2>
-            <p class="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-4xl mx-auto">
+            <h2 class="text-3xl sm:text-4xl xl:text-5xl font-bold mt-2 text-gray-900 dark:text-white">Efficient, Experienced, and Flexible</h2>
+            <p class="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-4xl xl:max-w-5xl mx-auto">
                 We deliver the quality of a large enterprise team with the agility and focused attention of a boutique firm.
             </p>
 
@@ -937,35 +946,35 @@
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <span class="text-[#2f81f7] font-semibold uppercase tracking-widest text-sm">Our Partners</span>
-                <h2 class="text-3xl sm:text-4xl font-bold mt-2 text-gray-900 dark:text-white">Trusted by Innovative Companies</h2>
+                <h2 class="text-3xl sm:text-4xl xl:text-5xl font-bold mt-2 text-gray-900 dark:text-white">Trusted by Innovative Companies</h2>
             </div>
             <div class="flex flex-wrap justify-center items-center gap-x-12 gap-y-10 sm:gap-x-16 sm:gap-y-12">
                 <!-- Replace with your client logos. Use SVG for best quality. -->
-                <img src="Clientlogo/img1.png" alt="Client Logo 1" class="h-20 sm:h-24 lg:h-28 rounded-xl opacity-70 hover:opacity-100 transition-all duration-300 shadow-md hover:shadow-xl hover:scale-105">
-                <img src="Clientlogo/img2.png" alt="Client Logo 2" class="h-20 sm:h-24 lg:h-28 rounded-xl opacity-70 hover:opacity-100 transition-all duration-300 shadow-md hover:shadow-xl hover:scale-105">
-                <img src="Clientlogo/img3.png" alt="Client Logo 3" class="h-20 sm:h-24 lg:h-28 rounded-xl opacity-70 hover:opacity-100 transition-all duration-300 shadow-md hover:shadow-xl hover:scale-105">
-                <img src="Clientlogo/img.png" alt="Client Logo 4" class="h-20 sm:h-24 lg:h-28 rounded-xl opacity-70 hover:opacity-100 transition-all duration-300 shadow-md hover:shadow-xl hover:scale-105">
+                <img src="Clientlogo/img1.png" alt="Client Logo 1" class="h-20 sm:h-24 lg:h-28 rounded-xl opacity-70 hover:opacity-100 transition-all duration-300 shadow-md hover:shadow-xl hover:scale-105" width="100" height="100">
+                <img src="Clientlogo/img2.png" alt="Client Logo 2" class="h-20 sm:h-24 lg:h-28 rounded-xl opacity-70 hover:opacity-100 transition-all duration-300 shadow-md hover:shadow-xl hover:scale-105" width="100" height="100">
+                <img src="Clientlogo/img3.png" alt="Client Logo 3" class="h-20 sm:h-24 lg:h-28 rounded-xl opacity-70 hover:opacity-100 transition-all duration-300 shadow-md hover:shadow-xl hover:scale-105" width="100" height="100">
+                <img src="Clientlogo/img.png" alt="Client Logo 4" class="h-20 sm:h-24 lg:h-28 rounded-xl opacity-70 hover:opacity-100 transition-all duration-300 shadow-md hover:shadow-xl hover:scale-105" width="100" height="100">
             </div>
             <!-- NEW: Scrolling Logo Marquee -->
             <div class="mt-16 w-full overflow-hidden relative" style="mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);">
                 <div class="flex animate-scroll gap-16 py-8">
                     <!-- First set of logos -->
-                    <img src="Clientlogo/img_5.png" alt="Client Logo 1" class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300">
-                    <img src="Clientlogo/img_6.png" alt="Client Logo 2" class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300">
-                    <img src="Clientlogo/img_1.png" alt="Client Logo 3" class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300">
-                    <img src="Clientlogo/img_2.png" alt="Client Logo 4" class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300">
+                    <img src="Clientlogo/img_5.png" alt="Client Logo 1" class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300" width="100" height="100">
+                    <img src="Clientlogo/img_6.png" alt="Client Logo 2" class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300" width="100" height="100">
+                    <img src="Clientlogo/img_1.png" alt="Client Logo 3" class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300" width="100" height="100">
+                    <img src="Clientlogo/img_2.png" alt="Client Logo 4" class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300" width="100" height="100">
 
                     <!-- Duplicate set for seamless loop -->
-                    <img src="Clientlogo/img_3.png" alt="Client Logo 1" class="h-28 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300">
-                    <img src="Clientlogo/img_4.png" alt="Client Logo 2" class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300">
-                    <img src="Clientlogo/img_5.png" alt="Client Logo 3" class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300">
-                    <img src="Clientlogo/img_6.png" alt="Client Logo 4" class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300">
+                    <img src="Clientlogo/img_3.png" alt="Client Logo 1" class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300" width="100" height="100">
+                    <img src="Clientlogo/img_4.png" alt="Client Logo 2" class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300" width="100" height="100">
+                    <img src="Clientlogo/img_5.png" alt="Client Logo 3" class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300" width="100" height="100">
+                    <img src="Clientlogo/img_6.png" alt="Client Logo 4" class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300" width="100" height="100">
 
                     <!-- Third set for extra smooth scrolling -->
-                    <img src="Clientlogo/img_1.png" alt="Client Logo 1" class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300">
-                    <img src="Clientlogo/img_2.png" alt="Client Logo 2" class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300">
-                    <img src="Clientlogo/img_3.png" alt="Client Logo 3" class="h-28 sm:h-36 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300">
-                    <img src="Clientlogo/img_4.png" alt="Client Logo 4" class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300">
+                    <img src="Clientlogo/img_1.png" alt="Client Logo 1" class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300" width="100" height="100">
+                    <img src="Clientlogo/img_2.png" alt="Client Logo 2" class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300" width="100" height="100">
+                    <img src="Clientlogo/img_3.png" alt="Client Logo 3" class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300" width="100" height="100">
+                    <img src="Clientlogo/img_4.png" alt="Client Logo 4" class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300" width="100" height="100">
                 </div>
             </div>
         </div>
@@ -976,10 +985,10 @@
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <span class="text-[#2f81f7] font-semibold uppercase tracking-widest text-sm">Client Feedback</span>
-                <h2 class="text-3xl sm:text-4xl font-bold mt-2 text-gray-900 dark:text-white">What Our Partners Say</h2>
+                <h2 class="text-3xl sm:text-4xl xl:text-5xl font-bold mt-2 text-gray-900 dark:text-white">What Our Partners Say</h2>
             </div>
             <!-- Swiper Carousel Container -->
-            <div class="testimonial-swiper max-w-6xl mx-auto relative overflow-hidden">
+            <div class="testimonial-swiper max-w-6xl xl:max-w-7xl mx-auto relative overflow-hidden" style="min-height: 300px;">
 
                 <div class="swiper-wrapper">
                     <!-- Testimonial 1 -->
@@ -1036,19 +1045,19 @@
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <span class="text-[#2f81f7] font-semibold uppercase tracking-widest text-sm">Transparent Costing</span>
-                <h2 class="text-3xl sm:text-4xl font-bold mt-2 text-gray-900 dark:text-white">Flexible Hourly Rates</h2>
+                <h2 class="text-3xl sm:text-4xl xl:text-5xl font-bold mt-2 text-gray-900 dark:text-white">Flexible Hourly Rates</h2>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl xl:max-w-7xl mx-auto" style="grid-auto-rows: 1fr;">
 
                 <!-- Pricing Card 1: Basic (Hover to reveal button) -->
-                <div class="card p-6 rounded-xl flex flex-col items-center group bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#303d3d] hover:border-[#2f81f7] hover:-translate-y-0.5">
+                <div class="card p-6 rounded-xl flex flex-col items-center group bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#303d3d] hover:border-[#2f81f7] hover:-translate-y-0.5 h-full">
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Basic</h3>
                     <div class="flex items-baseline mb-6 space-x-1">
                         <p class="text-4xl font-extrabold text-[#2f81f7]">$12</p>
                         <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">/ hour</p>
                     </div>
-                    <p class="text-gray-600 dark:text-gray-400 text-center text-sm mb-4">Ideal for small projects and junior support roles.</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-center text-sm mb-4 flex-grow">Ideal for small projects and junior support roles.</p>
                     <!-- Button hidden by default, visible on group hover -->
                     <a href="#contact" class="w-full px-4 py-2 text-center text-base font-semibold rounded-lg bg-[#2f81f7] hover:bg-[#3888ff] text-white transition duration-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible">
                         Inquire
@@ -1056,14 +1065,14 @@
                 </div>
 
                 <!-- Pricing Card 2: Plus (Recommended - Hover to reveal button) -->
-                <div class="card p-6 rounded-xl flex flex-col items-center border-2 border-[#2f81f7] dark:bg-[#1f2834] group bg-white hover:-translate-y-0.5">
+                <div class="card p-6 rounded-xl flex flex-col items-center border-2 border-[#2f81f7] dark:bg-[#1f2834] group bg-white hover:-translate-y-0.5 h-full">
                     <span class="text-xs font-bold text-white bg-[#2f81f7] py-1 px-3 rounded-full mb-3 uppercase">Recommended</span>
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Plus</h3>
                     <div class="flex items-baseline mb-6 space-x-1">
                         <p class="text-4xl font-extrabold text-gray-900 dark:text-white">$18</p>
                         <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">/ hour</p>
                     </div>
-                    <p class="text-gray-600 dark:text-gray-400 text-center text-sm mb-4">Standard rate for mid-level software development.</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-center text-sm mb-4 flex-grow">Standard rate for mid-level software development.</p>
                     <!-- Button hidden by default, visible on group hover -->
                     <a href="#contact" class="w-full px-4 py-2 text-center text-base font-semibold rounded-lg bg-[#2f81f7] hover:bg-[#3888ff] text-white transition duration-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible">
                         Get Started
@@ -1071,13 +1080,13 @@
                 </div>
 
                 <!-- Pricing Card 3: Premium (Hover to reveal button) -->
-                <div class="card p-6 rounded-xl flex flex-col items-center group bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#303d3d] hover:border-[#2f81f7] hover:-translate-y-0.5">
+                <div class="card p-6 rounded-xl flex flex-col items-center group bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#303d3d] hover:border-[#2f81f7] hover:-translate-y-0.5 h-full">
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Premium</h3>
                     <div class="flex items-baseline mb-6 space-x-1">
                         <p class="text-4xl font-extrabold text-[#2f81f7]">$25</p>
                         <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">/ hour</p>
                     </div>
-                    <p class="text-gray-600 dark:text-gray-400 text-center text-sm mb-4">For senior architecture, AI strategy, and consulting.</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-center text-sm mb-4 flex-grow">For senior architecture, AI strategy, and consulting.</p>
                     <!-- Button hidden by default, visible on group hover -->
                     <a href="#contact" class="w-full px-4 py-2 text-center text-base font-semibold rounded-lg bg-[#2f81f7] hover:bg-[#3888ff] text-white transition duration-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible">
                         Inquire
@@ -1085,13 +1094,13 @@
                 </div>
 
                 <!-- Pricing Card 4: Custom (Always visible button) -->
-                <div class="card p-6 rounded-xl flex flex-col items-center group bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#303d3d] hover:border-[#2f81f7] hover:-translate-y-0.5">
+                <div class="card p-6 rounded-xl flex flex-col items-center group bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#303d3d] hover:border-[#2f81f7] hover:-translate-y-0.5 h-full">
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Custom</h3>
                     <div class="flex items-baseline mb-6 space-x-1">
                         <p class="text-4xl font-extrabold text-[#2f81f7]">$ X</p>
                         <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">/ hour</p>
                     </div>
-                    <p class="text-gray-600 dark:text-gray-400 text-center text-sm mb-4">Fixed-bid projects or long-term partnership rates.</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-center text-sm mb-4 flex-grow">Fixed-bid projects or long-term partnership rates.</p>
                     <!-- Blue button style - always visible -->
                     <a href="#contact" class="w-full px-4 py-2 text-center text-base font-semibold rounded-lg bg-[#2f81f7] hover:bg-[#3888ff] text-white transition duration-300">
                         Contact Us
@@ -1105,9 +1114,9 @@
     <!-- 7. Contact Section -->
     <section id="contact" class="py-16 sm:py-24">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="max-w-3xl mx-auto bg-gray-50 dark:bg-[#161b22] p-8 sm:p-10 rounded-2xl border border-gray-200 dark:border-[#303d3d]">
+            <div class="max-w-3xl xl:max-w-4xl mx-auto bg-gray-50 dark:bg-[#161b22] p-8 sm:p-10 rounded-2xl border border-gray-200 dark:border-[#303d3d]">
                 <div class="text-center mb-10">
-                    <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Get Started with MAK Software</h2>
+                    <h2 class="text-3xl sm:text-4xl xl:text-5xl font-bold text-gray-900 dark:text-white">Get Started with MAK Software</h2>
                     <p class="mt-2 text-lg text-gray-600 dark:text-gray-400">Let's discuss your next project.</p>
                 </div>
 
@@ -1130,10 +1139,11 @@
                                  alt="Inquiry Form QR Code"
                                  title="Scan QR code"
                                  class="w-auto block max-h-48"
+                                 width="192" height="192"
                                  style="object-fit: contain; max-width:max-content; height:auto; display:inline-block;"
                                  loading="eager"
                                  decoding="async"
-                                 onerror="this.onerror=null;this.src='assets/qr/form_qr.png';">
+                                 onerror="this.onerror=null;this.src='form_qr.png';">
                         </button>
                     </div>
 
@@ -1171,7 +1181,7 @@
         <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Use your phone's camera to open the inquiry form.</p>
 
         <!-- Larger QR Code -->
-        <img src="form_qr.png" alt="Inquiry Form QR Code" class="w-full h-auto rounded-lg mx-auto" loading="lazy" onerror="this.onerror=null;this.src='assets/qr/form_qr.png';">
+        <img src="form_qr.png" alt="Inquiry Form QR Code" class="w-full h-auto rounded-lg mx-auto" loading="lazy" onerror="this.onerror=null;this.src='form_qr.png';">
 
     </div>
 </div>
@@ -1191,7 +1201,7 @@
         <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Scan to view our current openings and apply.</p>
 
         <!-- Larger QR Code (career-specific) -->
-        <img src="career_qr.png" alt="Career Openings QR Code" class="w-full h-auto rounded-lg mx-auto" loading="lazy" onerror="this.onerror=null;this.src='/i4c_careers_qr.png';">
+        <img src="i4c_careers_qr.png" alt="Career Openings QR Code" class="w-full h-auto rounded-lg mx-auto" width="350" height="350" loading="lazy" onerror="this.onerror=null;this.src='i4c_careers_qr.png';">
 
         <!--Apply Now Button-->
         <button id="open-career-iframe-btn" type="button" aria-label="Open application form" class="mt-6 inline-block w-full px-4 py-2.5 text-base font-semibold rounded-lg bg-[#2f81f7] hover:bg-[#3888ff] text-white transition duration-300">
@@ -1722,38 +1732,45 @@
 
     // --- Swiper Carousel Initialization ---
     document.addEventListener('DOMContentLoaded', function () {
-        const testimonialSwiper = new Swiper('.testimonial-swiper', {
-            loop: true,
-            freeMode: true,
-            grabCursor: true,
-            slidesPerView: 'auto',
-            spaceBetween: 32,
-            autoplay: {
-                delay: 0,
-                disableOnInteraction: false,
-                pauseOnMouseEnter: true, // Pauses the marquee on hover
-            },
-            speed: 7000, // Professional testimonial scroll speed (7 seconds) - optimal for readability and engagement
-            allowTouchMove: true,
-            // pagination: {
-            //     el: '.swiper-pagination',
-            //     clickable: true,
-            // },
-            breakpoints: {
-                640: { slidesPerView: 1.2, spaceBetween: 24 },
-                768: { slidesPerView: 2, spaceBetween: 28 },
-                1024: { slidesPerView: 3, spaceBetween: 32 },
-            },
-            // Accessibility: Respect user's motion preferences
-            on: {
-                init: function() {
-                    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-                    if (prefersReducedMotion.matches) {
-                        this.autoplay.stop();
-                    }
+        const testimonialsSection = document.getElementById('testimonials');
+        const testimonialSwiper = testimonialsSection.querySelector('.testimonial-swiper');
+
+        const swiperObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    new Swiper(testimonialSwiper, {
+                        loop: true,
+                        freeMode: true,
+                        grabCursor: true,
+                        slidesPerView: 'auto',
+                        spaceBetween: 32,
+                        autoplay: {
+                            delay: 0,
+                            disableOnInteraction: false,
+                            pauseOnMouseEnter: true,
+                        },
+                        speed: 7000,
+                        allowTouchMove: true,
+                        breakpoints: {
+                            640: { slidesPerView: 1.2, spaceBetween: 24 },
+                            768: { slidesPerView: 2, spaceBetween: 28 },
+                            1024: { slidesPerView: 3, spaceBetween: 32 },
+                        },
+                        on: {
+                            init: function() {
+                                const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+                                if (prefersReducedMotion.matches) {
+                                    this.autoplay.stop();
+                                }
+                            }
+                        }
+                    });
+                    observer.unobserve(testimonialsSection);
                 }
-            }
-        });
+            });
+        }, { threshold: 0.1 });
+
+        swiperObserver.observe(testimonialsSection);
     });
 
     // iFrame Modal Logic for Career Apply Now Button
@@ -1825,9 +1842,8 @@
             }
         }
 
-        // Close when double-clicking on backdrop
-        modal.addEventListener('dblclick', (ev) => {
-            ev.preventDefault(); // Prevent text selection
+        // Close when clicking on backdrop
+        modal.addEventListener('click', (ev) => {
             if (ev.target === modal) closeCareerIframeModal();
         });
 
