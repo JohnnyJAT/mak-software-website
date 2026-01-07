@@ -746,9 +746,13 @@
      class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/10 transition-opacity duration-300"
      role="dialog" aria-labelledby="launch-banner-title" aria-modal="true">
     <div class="relative m-4 max-w-md w-full rounded-2xl bg-white dark:bg-[#161b22] p-8 text-center shadow-2xl border border-gray-200 dark:border-[#30363d] banner-content overflow-hidden">
-        <!-- Decorative background element -->
-        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-purple-500"></div>
 
+        <!-- Progress bar for launch banner: fills over banner lifetime;
+        set data-duration-ms on the #launch-banner element to control lifespan -->
+        <div class="absolute left-0 right-0 bottom-0 h-1 bg-transparent">
+            <div id="launch-banner-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"
+                 style="width:0%; height:100%; background:linear-gradient(90deg,#0f8ac7,#4f5e6c); border-radius:4px; transition:width 0.2s linear;"></div>
+        </div>
         <button id="close-banner-btn"
                 class="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-white rounded-full transition-colors focus:outline-none hover:bg-gray-100 dark:hover:bg-gray-800"
                 aria-label="Close">
@@ -761,18 +765,9 @@
             </div>
         </div>
 
-        <h3 id="launch-banner-title" class="text-3xl font-bold mb-3 text-gradient">
-            MAK HRMS<br>
-            <span class="text-lg font-semibold">Launching soon !</span>
-        </h3>
-        <p class="text-gray-600 dark:text-gray-300 mb-8 leading-relaxed text-lg">
-            Exciting things are on the way. <br>Get ready for a whole new experience.
-        </p>
-
-        <button id="banner-action-btn"
-                class="w-full py-3.5 px-6 btn-gradient text-white font-bold text-lg rounded-xl transition duration-300 shadow-lg shadow-blue-500/25 focus:outline-none transform hover:-translate-y-0.5">
-            Notify Me
-        </button>
+        <div class="mb-8 flex items-center justify-center">
+            <img src="public/assets/notifications/HRMS_Post_1.png" alt="MAK HRMS Launch Notification Post" class="mx-auto w-full h-auto max-h-[60vh] object-contain rounded-lg shadow-lg" loading="lazy" onerror="this.onerror=null;this.src='public/assets/notifications/HRMS_Post_1.png';">
+        </div>
     </div>
 </div>
 <script>
@@ -2227,6 +2222,55 @@
 
         swiperObserver.observe(testimonialsSection);
     });
+
+    // --- Launch Banner Progress Bar Logic ---
+    (function () {
+        const banner = document.getElementById('launch-banner');
+        const progress = document.getElementById('launch-banner-progress');
+        const duration = parseInt(banner.getAttribute('data-duration-ms')) || 3000; // default 3s
+        let rafId = null;
+        let start = null;
+
+        const reset = () => {
+            progress.style.width = '0%';
+            progress.setAttribute('aria-valuenow', '0');
+            if (rafId) cancelAnimationFrame(rafId);
+            rafId = null;
+            start = null;
+        };
+
+        const step = (timestamp) => {
+            if (!start) start = timestamp;
+            const elapsed = timestamp - start;
+            const pct = Math.min(100, (elapsed / duration) * 100);
+            progress.style.width = pct + '%';
+            progress.setAttribute('aria-valuenow', Math.floor(pct));
+            if (pct < 100) {
+                rafId = requestAnimationFrame(step);
+            } else {
+                // auto-close banner when progress completes
+                const closeBtn = document.getElementById('close-banner-btn');
+                if (closeBtn) closeBtn.click();
+            }
+        };
+
+        const observer = new MutationObserver(() => {
+            const isVisible = banner.classList.contains('flex') && !banner.classList.contains('hidden');
+            if (isVisible) {
+                reset();
+                rafId = requestAnimationFrame(step);
+            } else {
+                reset();
+            }
+        });
+
+        observer.observe(banner, {attributes: true, attributeFilter: ['class']});
+        window.addEventListener('beforeunload', () => {
+            observer.disconnect();
+            reset();
+        });
+    })();
+</script>
 
 </script>
 
