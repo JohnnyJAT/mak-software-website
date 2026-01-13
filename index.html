@@ -1570,7 +1570,7 @@
 <!-- Career QR Code Modal -->
 <div id="career-qr-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
      aria-labelledby="career-qr-modal-title" role="dialog" aria-modal="true">
-    <div class="relative m-4 max-w-xs w-full rounded-2xl bg-white p-6 text-center shadow-xl dark:bg-[#161b22] dark:border dark:border-[#303d3d]">
+    <div class="relative m-4 max-w-md w-full rounded-2xl bg-white p-6 text-center shadow-xl dark:bg-[#161b22] dark:border dark:border-[#303d3d]">
         <!-- Close Button -->
         <button id="close-career-qr-modal-btn" type="button"
                 class="absolute top-2 right-2 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-white rounded-full"
@@ -1583,11 +1583,29 @@
             <h3 id="career-qr-modal-title" class="text-lg font-semibold text-gray-900 dark:text-white">We are
                 hiring</h3>
         </div>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Scan to view our current openings and apply.</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Select an option to view and apply.</p>
 
-        <!-- Larger QR Code (career-specific) -->
-        <img src="i4c_careers_qr.png" alt="Career Openings QR Code" class="w-full h-auto rounded-lg mx-auto" width="350"
-             height="350" loading="lazy" onerror="this.onerror=null;this.src='i4c_careers_qr.png';">
+        <!-- Dropdown Selector -->
+        <div class="mb-4">
+            <label for="application-type-select" class="sr-only">Select Application Type</label>
+            <select id="application-type-select" 
+                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-[#30363d] bg-white dark:bg-[#0d1117] text-gray-900 dark:text-white focus:ring-2 focus:ring-[#2f81f7] focus:border-transparent transition duration-200">
+                <option value="career">Career Opportunities</option>
+                <option value="internship">Internship Program</option>
+            </select>
+        </div>
+
+        <!-- Career QR Code -->
+        <div id="career-qr-container" class="qr-container">
+            <img src="i4c_careers_qr.png" alt="Career Openings QR Code" class="w-full h-auto rounded-lg mx-auto" width="350"
+                 height="350" loading="lazy" onerror="this.onerror=null;this.src='i4c_careers_qr.png';">
+        </div>
+
+        <!-- Internship QR Code -->
+        <div id="internship-qr-container" class="qr-container hidden">
+            <img src="public/assets/qr/msw_internship_application_qr.png" alt="Internship Application QR Code" class="w-full h-auto rounded-lg mx-auto" width="350"
+                 height="350" loading="lazy" onerror="this.onerror=null;this.src='public/assets/qr/msw_internship_application_qr.png';">
+        </div>
 
         <!--Apply Now Button-->
         <button id="open-career-iframe-btn" type="button" aria-label="Open application form"
@@ -1612,6 +1630,27 @@
 
         <div class="h-full">
             <iframe id="career-iframe" width="100%" height="100%" src="https://forms.office.com/r/uXZVEezckV?embed=true"
+                    frameborder="0" marginwidth="0" marginheight="0" style="border: none; width:100%; height:100%;"
+                    allowfullscreen webkitallowfullscreen mozallowfullscreen msallowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<!-- Internship Iframe Modal -->
+<div id="internship-iframe-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm"
+     role="dialog" aria-modal="true" aria-labelledby="internship-iframe-title">
+    <div class="relative w-full max-w-4xl mx-4 my-6 max-h-[90vh] h-[90vh] rounded-2xl bg-white p-4 shadow-xl overflow-hidden dark:bg-[#161b22]">
+        <button id="close-internship-iframe-btn" type="button"
+                class="absolute top-3 right-3 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-white rounded-full"
+                aria-label="Close">
+            <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+
+        <h3 id="internship-iframe-title" class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Apply —
+            Internship</h3>
+
+        <div class="h-full">
+            <iframe id="internship-iframe" width="100%" height="100%" src="https://forms.office.com/r/1BaWz15i9h?embed=true"
                     frameborder="0" marginwidth="0" marginheight="0" style="border: none; width:100%; height:100%;"
                     allowfullscreen webkitallowfullscreen mozallowfullscreen msallowfullscreen></iframe>
         </div>
@@ -2084,6 +2123,13 @@
 
             function openCareerIframeModal(e) {
                 if (e) e.preventDefault();
+                
+                // Check if this should open the internship modal instead
+                const applicationType = openBtn.getAttribute('data-type');
+                if (applicationType === 'internship') {
+                    return; // Let the internship handler deal with it
+                }
+                
                 // First, close the QR modal without returning focus
                 closeCareerModal(true);
 
@@ -2141,6 +2187,129 @@
 
             openBtn.addEventListener('click', openCareerIframeModal);
             closeBtn.addEventListener('click', closeCareerIframeModal);
+        })();
+
+        // --- Dropdown Selection Handler for QR Codes ---
+        (function () {
+            const applicationTypeSelect = document.getElementById('application-type-select');
+            const careerQrContainer = document.getElementById('career-qr-container');
+            const internshipQrContainer = document.getElementById('internship-qr-container');
+            const applyNowBtn = document.getElementById('open-career-iframe-btn');
+
+            function updateQRDisplay() {
+                const selectedType = applicationTypeSelect.value;
+                
+                if (selectedType === 'career') {
+                    careerQrContainer.classList.remove('hidden');
+                    internshipQrContainer.classList.add('hidden');
+                    applyNowBtn.setAttribute('data-type', 'career');
+                    applyNowBtn.setAttribute('aria-label', 'Open career application form');
+                } else if (selectedType === 'internship') {
+                    careerQrContainer.classList.add('hidden');
+                    internshipQrContainer.classList.remove('hidden');
+                    applyNowBtn.setAttribute('data-type', 'internship');
+                    applyNowBtn.setAttribute('aria-label', 'Open internship application form');
+                }
+            }
+
+            // Initialize on page load
+            updateQRDisplay();
+
+            // Listen for dropdown changes
+            applicationTypeSelect.addEventListener('change', updateQRDisplay);
+        })();
+
+        // --- Internship iFrame Modal Logic ---
+        (function () {
+            const applyNowBtn = document.getElementById('open-career-iframe-btn');
+            const careerModal = document.getElementById('career-iframe-modal');
+            const internshipModal = document.getElementById('internship-iframe-modal');
+            const closeInternshipBtn = document.getElementById('close-internship-iframe-btn');
+            const internshipIframe = document.getElementById('internship-iframe');
+            let lastFocused = null;
+
+            // Preserve original src in data-src and avoid loading it initially
+            const originalSrc = internshipIframe.getAttribute('data-src') || internshipIframe.getAttribute('src') || '';
+            if (!internshipIframe.getAttribute('data-src')) {
+                internshipIframe.setAttribute('data-src', originalSrc);
+                // Prevent initial load until modal opens
+                internshipIframe.src = 'about:blank';
+            }
+
+            function setInternshipIframeFreshSrc() {
+                const base = internshipIframe.getAttribute('data-src') || originalSrc;
+                if (!base) return;
+                const sep = base.includes('?') ? '&' : '?';
+                internshipIframe.src = base + sep + 't=' + Date.now();
+            }
+
+            function openInternshipIframeModal(e) {
+                if (e) e.preventDefault();
+                // First, close the QR modal without returning focus
+                closeCareerModal(true);
+
+                lastFocused = document.activeElement;
+                // show modal
+                internshipModal.classList.remove('hidden');
+                internshipModal.classList.add('flex');
+                // ensure icons render
+                if (window.lucide) window.lucide.createIcons();
+                // load fresh iframe content
+                setInternshipIframeFreshSrc();
+                // focus for accessibility
+                closeInternshipBtn.focus();
+                document.addEventListener('keydown', handleInternshipKeyDown, true);
+            }
+
+            function closeInternshipIframeModal() {
+                // hide modal
+                internshipModal.classList.add('hidden');
+                internshipModal.classList.remove('flex');
+                // unload iframe to clear state/cache and free memory
+                try {
+                    internshipIframe.src = 'about:blank';
+                } catch (err) { /* ignore */
+                }
+                if (lastFocused) lastFocused.focus();
+                document.removeEventListener('keydown', handleInternshipKeyDown, true);
+            }
+
+            function handleInternshipKeyDown(ev) {
+                if (ev.key === 'Escape') {
+                    closeInternshipIframeModal();
+                    return;
+                }
+                if (ev.key === 'Tab') {
+                    // Basic focus trap inside modal
+                    const focusable = internshipModal.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])');
+                    if (!focusable.length) return;
+                    const first = focusable[0];
+                    const last = focusable[focusable.length - 1];
+                    if (ev.shiftKey && document.activeElement === first) {
+                        ev.preventDefault();
+                        last.focus();
+                    } else if (!ev.shiftKey && document.activeElement === last) {
+                        ev.preventDefault();
+                        first.focus();
+                    }
+                }
+            }
+
+            // Close when clicking on backdrop
+            internshipModal.addEventListener('click', (ev) => {
+                if (ev.target === internshipModal) closeInternshipIframeModal();
+            });
+
+            closeInternshipBtn.addEventListener('click', closeInternshipIframeModal);
+
+            // Handle Apply Now button to open appropriate modal based on selection
+            applyNowBtn.addEventListener('click', function(e) {
+                const applicationType = this.getAttribute('data-type');
+                if (applicationType === 'internship') {
+                    openInternshipIframeModal(e);
+                }
+                // Career modal is already handled by the existing event listener
+            });
         })();
 
         // --- AI Brainstormer Interaction ---
