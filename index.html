@@ -2483,6 +2483,45 @@
     })();
 </script>
 
+<script>
+(function () {
+  // Attempt to fetch SPA bootstrap data with a 2s timeout; fall back to legacy site on failure
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+  fetch('https://cs.maksoftware.in/ms/v1', { signal: controller.signal })
+    .then(response => {
+      clearTimeout(timeoutId);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.json();
+    })
+    .then(data => {
+      // If your new React app expects JSON, call the app bootstrap handler if present
+      if (typeof renderNewApp === 'function') {
+        try {
+          renderNewApp(data);
+          return;
+        } catch (err) {
+          console.error('renderNewApp failed:', err);
+        }
+      }
+
+      // Fallback: if server returned HTML in `data.html`, inject into a container
+      if (data && data.html) {
+        const container = document.getElementById('spa-root') || document.body;
+        container.innerHTML = data.html;
+        return;
+      }
+
+      // No handler / HTML — run legacy renderer
+      console.warn('No new-app handler or HTML found, falling back.');
+      renderLegacyContent();
+    })
+    .catch(err => {
+      clearTimeout(timeoutId);
+      console.warn('Fallback: Serving Indexed Site.', err);
+    });
+})();
 </script>
 
 </body>
