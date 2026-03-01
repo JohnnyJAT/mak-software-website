@@ -2485,7 +2485,7 @@
 
 <script>
     (function () {
-        const url = 'https://cs.maksoftware.in/ms/';
+        const spaUrl = 'https://cs.maksoftware.in/ms/';
         const maxDelay = 30000;
         let attempt = 0;
 
@@ -2493,29 +2493,36 @@
             return new Promise(resolve => setTimeout(resolve, ms));
         }
 
-        // Function to render the new SPA app
-        function renderNewApp(content) {
-            if (typeof content === 'string') {
-                // Rewrite relative asset URLs to absolute URLs pointing to the SPA server
-                const spaBaseUrl = 'https://cs.maksoftware.in/ms/';
-                const spaOrigin = 'https://cs.maksoftware.in';
-                let fixedContent = content
-                    // Fix paths starting with /ms/ (absolute paths with base)
-                    .replace(/(href|src)=["']\/ms\/([^"']+)["']/gi, `$1="${spaBaseUrl}$2"`)
-                    // Fix relative paths starting with ./
-                    .replace(/(href|src)=["']\.\/([^"']+)["']/gi, `$1="${spaBaseUrl}$2"`)
-                    // Fix relative paths starting with / (but not //)
-                    .replace(/(href|src)=["']\/(?![\/"'])([^"']+)["']/gi, `$1="${spaOrigin}/$2"`)
-                    // Fix paths in CSS url()
-                    .replace(/url\(["']?\.\/([^"')]+)["']?\)/gi, `url("${spaBaseUrl}$1")`)
-                    .replace(/url\(["']?\/ms\/([^"')]+)["']?\)/gi, `url("${spaBaseUrl}$1")`);
+        // Function to render the new SPA app via iframe (bypasses CORS)
+        function renderNewApp() {
+            // Hide all existing content
+            document.body.style.overflow = 'hidden';
 
-                // Replace an entire document with the SPA content
-                document.open();
-                document.write(fixedContent);
-                document.close();
+            // Create fullscreen iframe for the new SPA
+            const iframe = document.createElement('iframe');
+            iframe.id = 'spa-frame';
+            iframe.src = spaUrl;
+            iframe.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      border: none;
+      z-index: 999999;
+      background: #fff;
+    `;
+
+            // Hide legacy content and show iframe
+            const legacyContent = document.body.children;
+            for (let i = 0; i < legacyContent.length; i++) {
+                if (legacyContent[i].id !== 'spa-frame') {
+                    legacyContent[i].style.display = 'none';
+                }
             }
-            console.log('New app rendered successfully');
+
+            document.body.appendChild(iframe);
+            console.log('New SPA app rendered in iframe');
         }
 
         // Fallback to show existing legacy content (already rendered)
@@ -2524,39 +2531,50 @@
             // Legacy content is already in the DOM, nothing to do
         }
 
+        // Use a hidden iframe to check if SPA is available (bypasses CORS)
+        function checkSpaAvailability() {
+            return new Promise((resolve) => {
+                const testIframe = document.createElement('iframe');
+                testIframe.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;';
+                testIframe.src = spaUrl;
+
+                const timeout = setTimeout(() => {
+                    testIframe.remove();
+                    resolve(false);
+                }, 5000); // 5 second timeout per attempt
+
+                testIframe.onload = () => {
+                    clearTimeout(timeout);
+                    testIframe.remove();
+                    resolve(true);
+                };
+
+                testIframe.onerror = () => {
+                    clearTimeout(timeout);
+                    testIframe.remove();
+                    resolve(false);
+                };
+
+                document.body.appendChild(testIframe);
+            });
+        }
+
         (async function pollBootstrap() {
             while (attempt <= 20) {
                 attempt++;
                 try {
-                    const response = await fetch(url);
-                    if (response.ok) {
-                        const contentType = response.headers.get('content-type') || '';
+                    console.log(`Checking SPA availability (attempt ${attempt})...`);
+                    const isAvailable = await checkSpaAvailability();
 
-                        // Handle HTML response
-                        if (contentType.includes('text/html')) {
-                            const htmlContent = await response.text();
-                            renderNewApp(htmlContent);
-                            return;
-                        }
-
-                        // Handle JSON response
-                        if (contentType.includes('application/json')) {
-                            const data = await response.json();
-                            if (data && data.html) {
-                                renderNewApp(data);
-                                return;
-                            }
-                        }
-
-                        // If neither HTML nor JSON with html property, fallback
-                        console.warn('Response did not contain usable content');
-                        renderLegacyContent();
+                    if (isAvailable) {
+                        console.log('SPA is available, rendering...');
+                        renderNewApp();
                         return;
                     } else {
-                        console.warn(`Fetch returned HTTP ${response.status} (attempt ${attempt})`);
+                        console.warn(`SPA not available (attempt ${attempt})`);
                     }
                 } catch (err) {
-                    console.warn(`Fetch failed (attempt ${attempt}):`, err);
+                    console.warn(`Check failed (attempt ${attempt}):`, err);
                 }
 
                 // Exponential backoff with jitter
