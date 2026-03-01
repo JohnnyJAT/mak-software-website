@@ -2485,42 +2485,48 @@
 
 <script>
 (function () {
-  // Attempt to fetch SPA bootstrap data with a 2s timeout; fall back to legacy site on failure
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 2000);
+  const url = 'https://cs.maksoftware.in/ms/';
+  const maxDelay = 30000;
+  let attempt = 0;
 
-  fetch('https://cs.maksoftware.in/ms/', { signal: controller.signal })
-    .then(response => {
-      clearTimeout(timeoutId);
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      return response.json();
-    })
-    .then(data => {
-      // If your new React app expects JSON, call the app bootstrap handler if present
-      if (typeof renderNewApp === 'function') {
-        try {
-          renderNewApp(data);
+  async function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  (async function pollBootstrap() {
+    while (attempt <= 20) {
+      attempt++;
+      try {
+        const response = await fetch(url);
+        if (response.ok) {
+          const data = await response.json();
+          if (typeof renderNewApp === 'function') {
+            try {
+              renderNewApp(data);
+              return; // stop polling after successful render
+            } catch (err) {
+              console.error('renderNewApp failed:', err);
+              // Fall through to fallback behavior below
+            }
+          }
+
+          // Run legacy renderer
+          renderLegacyContent();
           return;
-        } catch (err) {
-          console.error('renderNewApp failed:', err);
+        } else {
+          console.warn(`Fetch returned HTTP ${response.status} (attempt ${attempt})`);
         }
+      } catch (err) {
+        console.warn(`Fetch failed (attempt ${attempt}):`, err);
       }
 
-      // Fallback: if server returned HTML in `data.html`, inject into a container
-      if (data && data.html) {
-        const container = document.getElementById('spa-root') || document.body;
-        container.innerHTML = data.html;
-        return;
-      }
-
-      // No handler / HTML — run legacy renderer
-      console.warn('No new-app handler or HTML found, falling back.');
-      renderLegacyContent();
-    })
-    .catch(err => {
-      clearTimeout(timeoutId);
-      console.warn('Fallback: Serving Indexed Site.', err);
-    });
+      // Exponential backoff with jitter
+      const baseDelay = Math.min(maxDelay, Math.pow(2, Math.min(attempt, 8)) * 1000);
+      const jitter = Math.random() * 1000;
+      const delay = Math.min(maxDelay, baseDelay + jitter);
+      await wait(delay);
+    }
+  })();
 })();
 </script>
 
