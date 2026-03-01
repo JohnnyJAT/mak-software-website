@@ -2506,7 +2506,22 @@
 
             // If content is HTML string, inject it
             if (typeof content === 'string') {
-                spaRoot.innerHTML = content;
+                // Rewrite relative asset URLs to absolute URLs pointing to the SPA server
+                const spaBaseUrl = 'https://cs.maksoftware.in/ms/';
+                const spaOrigin = 'https://cs.maksoftware.in';
+                let fixedContent = content
+                    // Fix paths starting with /ms/ (absolute paths with base)
+                    .replace(/(href|src)=["']\/ms\/([^"']+)["']/gi, `$1="${spaBaseUrl}$2"`)
+                    // Fix relative paths starting with ./
+                    .replace(/(href|src)=["']\.\/([^"']+)["']/gi, `$1="${spaBaseUrl}$2"`)
+                    // Fix relative paths starting with / (but not //)
+                    .replace(/(href|src)=["']\/(?![\/"'])([^"']+)["']/gi, `$1="${spaOrigin}/$2"`)
+                    // Fix paths in CSS url()
+                    .replace(/url\(["']?\.\/([^"')]+)["']?\)/gi, `url("${spaBaseUrl}$1")`)
+                    .replace(/url\(["']?\/ms\/([^"')]+)["']?\)/gi, `url("${spaBaseUrl}$1")`);
+
+                spaRoot.innerHTML = fixedContent;
+
                 // Re-execute any scripts in the injected content
                 const scripts = spaRoot.querySelectorAll('script');
                 scripts.forEach(oldScript => {
