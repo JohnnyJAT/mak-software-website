@@ -2489,7 +2489,7 @@
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 2000);
 
-  fetch('https://cs.maksoftware.in/ms/v1', { signal: controller.signal })
+  fetch('https://cs.maksoftware.in/ms/', { signal: controller.signal })
     .then(response => {
       clearTimeout(timeoutId);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
