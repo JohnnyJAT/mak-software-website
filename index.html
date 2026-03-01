@@ -2493,69 +2493,24 @@
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  // Function to render the new SPA app
-  function renderNewApp(content) {
-    // Create or get the SPA root container
-    let spaRoot = document.getElementById('spa-root');
-    if (!spaRoot) {
-      spaRoot = document.createElement('div');
-      spaRoot.id = 'spa-root';
-      document.body.innerHTML = '';
-      document.body.appendChild(spaRoot);
-    }
-
-    // If content is HTML string, inject it
-    if (typeof content === 'string') {
-      spaRoot.innerHTML = content;
-      // Re-execute any scripts in the injected content
-      const scripts = spaRoot.querySelectorAll('script');
-      scripts.forEach(oldScript => {
-        const newScript = document.createElement('script');
-        Array.from(oldScript.attributes).forEach(attr => {
-          newScript.setAttribute(attr.name, attr.value);
-        });
-        newScript.textContent = oldScript.textContent;
-        oldScript.parentNode.replaceChild(newScript, oldScript);
-      });
-    } else if (content && content.html) {
-      // If content is an object with html property
-      spaRoot.innerHTML = content.html;
-    }
-    console.log('New app rendered successfully');
-  }
-
-  // Fallback to show existing legacy content (already rendered)
-  function renderLegacyContent() {
-    console.log('Serving legacy indexed site content');
-    // Legacy content is already in the DOM, nothing to do
-  }
-
   (async function pollBootstrap() {
     while (attempt <= 20) {
       attempt++;
       try {
         const response = await fetch(url);
         if (response.ok) {
-          const contentType = response.headers.get('content-type') || '';
-
-          // Handle HTML response
-          if (contentType.includes('text/html')) {
-            const htmlContent = await response.text();
-            renderNewApp(htmlContent);
-            return;
-          }
-
-          // Handle JSON response
-          if (contentType.includes('application/json')) {
-            const data = await response.json();
-            if (data && data.html) {
+          const data = await response.json();
+          if (typeof renderNewApp === 'function') {
+            try {
               renderNewApp(data);
-              return;
+              return; // stop polling after successful render
+            } catch (err) {
+              console.error('renderNewApp failed:', err);
+              // Fall through to fallback behavior below
             }
           }
 
-          // If neither HTML nor JSON with html property, fallback
-          console.warn('Response did not contain usable content');
+          // Run legacy renderer
           renderLegacyContent();
           return;
         } else {
@@ -2571,10 +2526,6 @@
       const delay = Math.min(maxDelay, baseDelay + jitter);
       await wait(delay);
     }
-
-    // After all attempts fail, render legacy content
-    console.warn('All fetch attempts exhausted, serving legacy content');
-    renderLegacyContent();
   })();
 })();
 </script>
