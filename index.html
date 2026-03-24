@@ -779,7 +779,6 @@
     document.addEventListener('DOMContentLoaded', function () {
         const banner = document.getElementById('launch-banner');
         const closeBtn = document.getElementById('close-banner-btn');
-        const actionBtn = document.getElementById('banner-action-btn');
 
         // Initialize icons for the banner
         if (typeof lucide !== 'undefined') {
@@ -849,7 +848,6 @@
             };
 
             closeBtn.addEventListener('click', closeAction);
-            actionBtn.addEventListener('click', closeAction);
             banner.addEventListener('click', (e) => {
                 if (e.target === banner) {
                     closeAction(e);
