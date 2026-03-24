@@ -2527,44 +2527,42 @@
 
         // Fallback to show existing legacy content (already rendered)
         function renderLegacyContent() {
-            console.log('Serving legacy indexed site content');
+            console.log('Serving legacy site');
             // Legacy content is already in the DOM, nothing to do
         }
 
-        // Use a hidden iframe to check if SPA is available (bypasses CORS)
-        function checkSpaAvailability() {
-            return new Promise((resolve) => {
-                const testIframe = document.createElement('iframe');
-                testIframe.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;';
-                testIframe.src = spaUrl;
+        async function checkSpaAvailability(spaUrl) {
+            // 1. Create an AbortController to handle the 5-second timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-                const timeout = setTimeout(() => {
-                    testIframe.remove();
-                    resolve(false);
-                }, 5000); // 5 second timeout per attempt
+            try {
+                // 2. Make the network request
+                const response = await fetch(spaUrl, {
+                    method: 'HEAD',
+                    signal: controller.signal,
+                    cache: 'no-store'
+                });
 
-                testIframe.onload = () => {
-                    clearTimeout(timeout);
-                    testIframe.remove();
-                    resolve(true);
-                };
+                // Clear the timeout since the request finished in time
+                clearTimeout(timeoutId);
 
-                testIframe.onerror = () => {
-                    clearTimeout(timeout);
-                    testIframe.remove();
-                    resolve(false);
-                };
+                // 3. Check if the HTTP status code is a success (200-299)
+                // If it's a 404, 500, etc., response.ok will be false.
+                return response.ok;
 
-                document.body.appendChild(testIframe);
-            });
+            } catch (error) {
+                clearTimeout(timeoutId);
+                return false;
+            }
         }
 
         (async function pollBootstrap() {
-            while (attempt <= 20) {
+            while (attempt <= 5) {
                 attempt++;
                 try {
                     console.log(`Checking SPA availability (attempt ${attempt})...`);
-                    const isAvailable = await checkSpaAvailability();
+                    const isAvailable = await checkSpaAvailability(spaUrl);
 
                     if (isAvailable) {
                         console.log('SPA is available, rendering...');
