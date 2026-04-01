@@ -82,51 +82,48 @@
             redirected = true;
 
             try {
-                const response = await fetch(spaUrl);
+                const response = await fetch(spaUrl); // e.g., https://xyz.basehost.com/
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
                 let html = await response.text();
                 const baseUrl = new URL('.', spaUrl).href;
 
-                // 1. Parse the fetched HTML safely
                 const parser = new DOMParser();
                 const newDoc = parser.parseFromString(html, 'text/html');
 
-                // 2. Inject the base tag into the parsed document
                 const baseTag = newDoc.createElement('base');
                 baseTag.href = baseUrl;
                 newDoc.head.insertBefore(baseTag, newDoc.head.firstChild);
 
-                // 3. Replace the current document's HTML
+                // ==========================================
+                // STEP 1: THE MAGIC FIX (SPOOF THE URL)
+                // ==========================================
+                // Force the browser URL to look like the root '/'
+                // so React Router boots up the Home component instead of rendering null.
+                window.history.replaceState(null, '', '/');
+
+                // STEP 2: Replace the DOM
                 document.documentElement.replaceWith(newDoc.documentElement);
 
-                // 4. Extract and manually re-insert scripts so the browser executes them
+                // STEP 3: Re-execute the scripts
                 const scripts = Array.from(document.querySelectorAll('script'));
                 scripts.forEach(oldScript => {
                     const newScript = document.createElement('script');
 
-                    // Copy all attributes (src, type, defer, etc.)
                     Array.from(oldScript.attributes).forEach(attr => {
                         newScript.setAttribute(attr.name, attr.value);
                     });
 
-                    // Copy inline script content if any
                     if (oldScript.innerHTML) {
                         newScript.appendChild(document.createTextNode(oldScript.innerHTML));
                     }
 
-                    // Replace the old, unexecuted script with the new, executable one
                     oldScript.parentNode.replaceChild(newScript, oldScript);
                 });
 
-                // 5. Trigger lifecycle events to start the SPA
-                window.document.dispatchEvent(new Event('DOMContentLoaded', { bubbles: true, cancelable: true }));
-                window.dispatchEvent(new Event('load'));
-
             } catch (error) {
-                logErrorSecurely('SPA injection failed', error.message);
+                console.error('SPA injection failed', error);
                 redirected = false;
-                showFallback();
             }
         }
 
