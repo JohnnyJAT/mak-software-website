@@ -533,9 +533,19 @@
         }
     </script>
     <script>
-        // Prevent FOUC (Flash of Unstyled Content) by applying theme before page renders
+        // Prevent FOUC (Flash of Unstyled Content) by applying theme before page renders.
+        // Default is LIGHT unless the user explicitly saved DARK.
         (function () {
-            if (localStorage.getItem('color-theme') === 'dark' || (!localStorage.getItem('color-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            function getCookie(name) {
+                const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const match = document.cookie.match(new RegExp('(?:^|;\\s*)' + escaped + '=([^;]*)'));
+                return match ? decodeURIComponent(match[1]) : null;
+            }
+
+            const cookieTheme = getCookie('color-theme');
+            const storedTheme = cookieTheme || localStorage.getItem('color-theme');
+
+            if (storedTheme === 'dark') {
                 document.documentElement.classList.add('dark');
             } else {
                 document.documentElement.classList.remove('dark');
@@ -1840,15 +1850,35 @@
             }
         };
 
+        const setThemeCookie = (value) => {
+            const days = 365;
+            const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+            document.cookie = `color-theme=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
+        };
+
+        const getThemeCookie = () => {
+            const match = document.cookie.match(/(?:^|;\s*)color-theme=([^;]*)/);
+            return match ? decodeURIComponent(match[1]) : null;
+        };
+
         const toggleTheme = () => {
             document.documentElement.classList.toggle('dark');
             const isDarkMode = document.documentElement.classList.contains('dark');
-            localStorage.setItem('color-theme', isDarkMode ? 'dark' : 'light');
+            const value = isDarkMode ? 'dark' : 'light';
+            localStorage.setItem('color-theme', value);
+            setThemeCookie(value);
             updateThemeVisuals();
         };
 
-        // Set initial theme from localStorage
-        if (localStorage.getItem('color-theme') === 'dark') {
+        // Initial theme: cookie (preferred) -> localStorage -> default light
+        const cookieTheme = getThemeCookie();
+        const storedTheme = cookieTheme || localStorage.getItem('color-theme');
+        if (!cookieTheme && storedTheme) {
+            // migrate old users to cookie
+            setThemeCookie(storedTheme);
+        }
+
+        if (storedTheme === 'dark') {
             document.documentElement.classList.add('dark');
         } else {
             document.documentElement.classList.remove('dark');
