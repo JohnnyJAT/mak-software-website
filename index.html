@@ -2528,35 +2528,34 @@
             return new Promise(resolve => setTimeout(resolve, ms));
         }
 
-        async function renderNewApp() {
-            if (redirected) return;
-            redirected = true;
+        function renderNewApp() {
+            // Hide all existing content
+            document.body.style.overflow = 'hidden';
 
-            try {
-                const response = await fetch(spaUrl);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            // Create fullscreen iframe for the new SPA
+            const iframe = document.createElement('iframe');
+            iframe.id = 'spa-frame';
+            iframe.src = spaUrl;
+            iframe.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      border: none;
+      z-index: 999999;
+      background: #fff;
+    `;
 
-                let html = await response.text();
-
-                // FIX: Determine the base URL from spaUrl
-                const baseUrl = new URL('.', spaUrl).href;
-
-                // Inject the <base> tag immediately after the <head> tag
-                html = html.replace('<head>', `<head><base href="${baseUrl}">`);
-
-                document.open();
-                document.write(html);
-                document.close();
-
-            } catch (error) {
-                // SECURE LOGGING: Remove console.error().
-                // Send the error to your private server silently.
-                logErrorSecurely('SPA routing failed', error.message);
-
-                // Reset state and fallback
-                redirected = false;
-                renderLegacyContent();
+            // Hide legacy content and show iframe
+            const legacyContent = document.body.children;
+            for (let i = 0; i < legacyContent.length; i++) {
+                if (legacyContent[i].id !== 'spa-frame') {
+                    legacyContent[i].style.display = 'none';
+                }
             }
+
+            document.body.appendChild(iframe);
         }
 
         function logErrorSecurely(context, errorMessage) {
