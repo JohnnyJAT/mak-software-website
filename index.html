@@ -533,9 +533,19 @@
         }
     </script>
     <script>
-        // Prevent FOUC (Flash of Unstyled Content) by applying theme before page renders
+        // Prevent FOUC (Flash of Unstyled Content) by applying theme before page renders.
+        // Default is LIGHT unless the user explicitly saved DARK.
         (function () {
-            if (localStorage.getItem('color-theme') === 'dark' || (!localStorage.getItem('color-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            function getCookie(name) {
+                const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const match = document.cookie.match(new RegExp('(?:^|;\\s*)' + escaped + '=([^;]*)'));
+                return match ? decodeURIComponent(match[1]) : null;
+            }
+
+            const cookieTheme = getCookie('color-theme');
+            const storedTheme = cookieTheme || localStorage.getItem('color-theme');
+
+            if (storedTheme === 'dark') {
                 document.documentElement.classList.add('dark');
             } else {
                 document.documentElement.classList.remove('dark');
@@ -1840,15 +1850,35 @@
             }
         };
 
+        const setThemeCookie = (value) => {
+            const days = 365;
+            const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+            document.cookie = `color-theme=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
+        };
+
+        const getThemeCookie = () => {
+            const match = document.cookie.match(/(?:^|;\s*)color-theme=([^;]*)/);
+            return match ? decodeURIComponent(match[1]) : null;
+        };
+
         const toggleTheme = () => {
             document.documentElement.classList.toggle('dark');
             const isDarkMode = document.documentElement.classList.contains('dark');
-            localStorage.setItem('color-theme', isDarkMode ? 'dark' : 'light');
+            const value = isDarkMode ? 'dark' : 'light';
+            localStorage.setItem('color-theme', value);
+            setThemeCookie(value);
             updateThemeVisuals();
         };
 
-        // Set initial theme from localStorage
-        if (localStorage.getItem('color-theme') === 'dark') {
+        // Initial theme: cookie (preferred) -> localStorage -> default light
+        const cookieTheme = getThemeCookie();
+        const storedTheme = cookieTheme || localStorage.getItem('color-theme');
+        if (!cookieTheme && storedTheme) {
+            // migrate old users to cookie
+            setThemeCookie(storedTheme);
+        }
+
+        if (storedTheme === 'dark') {
             document.documentElement.classList.add('dark');
         } else {
             document.documentElement.classList.remove('dark');
@@ -2485,43 +2515,24 @@
 <script>
     (function () {
         const spaUrl = 'https://cs.maksoftware.in/ms/';
+        // Max delay between retries while waiting for the SPA to come back online.
         const maxDelay = 30000;
+        // After the initial fast retries, keep checking at a steady pace so a late recovery still upgrades users.
+        const steadyDelay = 30000;
+        const initialAttempts = 6; // preserve previous behavior as the "fast" phase
         let attempt = 0;
+        let redirected = false;
+        let pollTimer = null;
 
         async function wait(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
         }
 
-        // Function to render the new SPA app via iframe (bypasses CORS)
         function renderNewApp() {
-            // Hide all existing content
-            document.body.style.overflow = 'hidden';
-
-            // Create fullscreen iframe for the new SPA
-            const iframe = document.createElement('iframe');
-            iframe.id = 'spa-frame';
-            iframe.src = spaUrl;
-            iframe.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      border: none;
-      z-index: 999999;
-      background: #fff;
-    `;
-
-            // Hide legacy content and show iframe
-            const legacyContent = document.body.children;
-            for (let i = 0; i < legacyContent.length; i++) {
-                if (legacyContent[i].id !== 'spa-frame') {
-                    legacyContent[i].style.display = 'none';
-                }
-            }
-
-            document.body.appendChild(iframe);
-            console.log('New SPA app rendered in iframe');
+            // Use replace() so the back button doesn't bounce users back to the legacy bootstrap page.
+            if (redirected) return;
+            redirected = true;
+            window.location.replace(spaUrl);
         }
 
         // Fallback to show existing legacy content (already rendered)
@@ -2530,60 +2541,100 @@
             // Legacy content is already in the DOM, nothing to do
         }
 
-        async function checkSpaAvailability(spaUrl) {
-            // 1. Create an AbortController to handle the 5-second timeout
+        function withCacheBust(url) {
+            // Bust only the PROBE request (not user cache) to avoid intermediary/proxy caching during restarts.
+            const sep = url.includes('?') ? '&' : '?';
+            return `${url}${sep}cb=${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        }
+
+        async function checkSpaAvailability(url) {
+            // Using HEAD is fragile (often 405/blocked). Prefer GET with redirect follow.
+            // We also accept an opaque response (no-cors) as "reachable" because bytes came back.
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 5000);
 
             try {
-                // 2. Make the network request
-                const response = await fetch(spaUrl, {
-                    method: 'HEAD',
+                const probeUrl = withCacheBust(url);
+                const response = await fetch(probeUrl, {
+                    method: 'GET',
                     signal: controller.signal,
-                    cache: 'no-store'
+                    cache: 'no-store',
+                    redirect: 'follow',
+                    // mode defaults to 'cors'. If the SPA host ever changes CORS behavior,
+                    // browsers may return an opaque response in 'no-cors'; we handle that below.
                 });
 
-                // Clear the timeout since the request finished in time
                 clearTimeout(timeoutId);
 
-                // 3. Check if the HTTP status code is a success (200-299)
-                // If it's a 404, 500, etc., response.ok will be false.
-                return response.ok;
+                // response.ok covers 2xx. Browsers may throw for network errors.
+                // Some edge-proxies can return 204/304; both indicate the origin is reachable.
+                if (response.ok) return true;
 
+                // Redirects may be surfaced as non-ok in some setups when probing a directory URL.
+                // If we got ANY HTTP response, treat 3xx as available.
+                if (response.status >= 300 && response.status < 400) return true;
+
+                // If we somehow got an opaque response (rare here), treat as reachable.
+                if (response.type === 'opaque') return true;
+
+                return false;
             } catch (error) {
                 clearTimeout(timeoutId);
                 return false;
             }
         }
 
-        (async function pollBootstrap() {
-            while (attempt <= 5) {
-                attempt++;
-                try {
-                    console.log(`Checking SPA availability (attempt ${attempt})...`);
-                    const isAvailable = await checkSpaAvailability(spaUrl);
-
-                    if (isAvailable) {
-                        console.log('SPA is available, rendering...');
-                        renderNewApp();
-                        return;
-                    } else {
-                        console.warn(`SPA not available (attempt ${attempt})`);
-                    }
-                } catch (err) {
-                    console.warn(`Check failed (attempt ${attempt}):`, err);
+        async function runOneCheck(label) {
+            if (redirected) return true;
+            try {
+                console.log(`Checking SPA availability${label ? ' (' + label + ')' : ''}...`);
+                const isAvailable = await checkSpaAvailability(spaUrl);
+                if (isAvailable) {
+                    console.log('SPA is available, redirecting...');
+                    renderNewApp();
+                    return true;
                 }
+                return false;
+            } catch (err) {
+                console.warn('SPA availability check failed:', err);
+                return false;
+            }
+        }
 
-                // Exponential backoff with jitter
+        (async function pollBootstrap() {
+            // Legacy content is already visible; we attempt to "upgrade" to SPA when it becomes reachable.
+            renderLegacyContent();
+
+            // Phase 1: fast retries with exponential backoff (similar to previous behavior)
+            while (attempt < initialAttempts && !redirected) {
+                attempt++;
+                const ok = await runOneCheck(`attempt ${attempt}`);
+                if (ok) return;
+
                 const baseDelay = Math.min(maxDelay, Math.pow(2, Math.min(attempt, 8)) * 1000);
                 const jitter = Math.random() * 1000;
                 const delay = Math.min(maxDelay, baseDelay + jitter);
                 await wait(delay);
             }
 
-            // After all attempts fail, render legacy content
-            console.warn('All fetch attempts exhausted, serving legacy content');
-            renderLegacyContent();
+            // Phase 2: steady polling so that if cs.mak comes back later, users still get upgraded.
+            // This avoids a "stuck on legacy" experience after a restart.
+            console.warn('SPA not available yet; continuing to check periodically in the background.');
+            pollTimer = setInterval(() => {
+                runOneCheck('background');
+            }, steadyDelay);
+
+            // If the user returns to the tab, check immediately (common when waiting during maintenance).
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) {
+                    runOneCheck('tab visible');
+                }
+            });
+
+            // Cleanup interval if we ever unload.
+            window.addEventListener('beforeunload', () => {
+                if (pollTimer) clearInterval(pollTimer);
+            });
         })();
     })();
 </script>
