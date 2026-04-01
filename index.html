@@ -77,52 +77,60 @@
             document.getElementById('error-state').style.display = 'block';
         }
 
-        async function renderNewApp() {
+        async function renderNewApp(spaUrl) {
             if (redirected) return;
             redirected = true;
 
             try {
-                const response = await fetch(spaUrl); // e.g., https://xyz.basehost.com/
+                const response = await fetch(spaUrl);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-                let html = await response.text();
-                const baseUrl = new URL('.', spaUrl).href;
+                const html = await response.text();
 
+                // Parse the fetched HTML to find the dynamic asset names
                 const parser = new DOMParser();
                 const newDoc = parser.parseFromString(html, 'text/html');
 
-                const baseTag = newDoc.createElement('base');
-                baseTag.href = baseUrl;
-                newDoc.head.insertBefore(baseTag, newDoc.head.firstChild);
+                // 1. Create the mount point.
+                // NOTE: Make sure this ID matches what the target SPA expects!
+                // Vite and Create React App default to "root", not "injected-root".
+                document.body.innerHTML = '<div id="root"></div>';
 
-                // ==========================================
-                // STEP 1: THE MAGIC FIX (SPOOF THE URL)
-                // ==========================================
-                // Force the browser URL to look like the root '/'
-                // so React Router boots up the Home component instead of rendering null.
+                // 2. Spoof the URL for the router
                 window.history.replaceState(null, '', '/');
 
-                // STEP 2: Replace the DOM
-                document.documentElement.replaceWith(newDoc.documentElement);
+                // 3. Dynamically extract and inject CSS
+                // You don't want to forget the styles!
+                const stylesheets = newDoc.querySelectorAll('link[rel="stylesheet"]');
+                stylesheets.forEach(link => {
+                    const newLink = document.createElement('link');
+                    newLink.rel = 'stylesheet';
+                    // Resolve relative paths (e.g. /assets/index.css) against the SPA's base URL
+                    newLink.href = new URL(link.getAttribute('href'), spaUrl).href;
+                    document.head.appendChild(newLink);
+                });
 
-                // STEP 3: Re-execute the scripts
-                const scripts = Array.from(document.querySelectorAll('script'));
+                // 4. Dynamically extract and inject the JS modules
+                // This targets Vite's <script type="module"> or CRA's <script defer>
+                const scripts = newDoc.querySelectorAll('script[src]');
                 scripts.forEach(oldScript => {
                     const newScript = document.createElement('script');
 
-                    Array.from(oldScript.attributes).forEach(attr => {
-                        newScript.setAttribute(attr.name, attr.value);
-                    });
+                    // Copy relevant attributes
+                    if (oldScript.type) newScript.type = oldScript.type;
+                    if (oldScript.crossOrigin) newScript.crossOrigin = oldScript.crossOrigin;
+                    if (oldScript.defer) newScript.defer = true;
 
-                    if (oldScript.innerHTML) {
-                        newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-                    }
+                    // Resolve the dynamic hashed path against the SPA's base URL
+                    const scriptSrc = oldScript.getAttribute('src');
+                    newScript.src = new URL(scriptSrc, spaUrl).href;
 
-                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                    // Append to body to trigger execution
+                    document.body.appendChild(newScript);
                 });
 
             } catch (error) {
-                console.error('SPA injection failed', error);
+                console.error('SPA injection failed:', error);
                 redirected = false;
             }
         }
