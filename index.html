@@ -86,14 +86,42 @@
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
                 let html = await response.text();
-
-                // Automatically inject the <base> tag to fix relative path 404s
                 const baseUrl = new URL('.', spaUrl).href;
-                html = html.replace('<head>', `<head><base href="${baseUrl}">`);
 
-                document.open();
-                document.write(html);
-                document.close();
+                // 1. Parse the fetched HTML safely
+                const parser = new DOMParser();
+                const newDoc = parser.parseFromString(html, 'text/html');
+
+                // 2. Inject the base tag into the parsed document
+                const baseTag = newDoc.createElement('base');
+                baseTag.href = baseUrl;
+                newDoc.head.insertBefore(baseTag, newDoc.head.firstChild);
+
+                // 3. Replace the current document's HTML
+                document.documentElement.replaceWith(newDoc.documentElement);
+
+                // 4. Extract and manually re-insert scripts so the browser executes them
+                const scripts = Array.from(document.querySelectorAll('script'));
+                scripts.forEach(oldScript => {
+                    const newScript = document.createElement('script');
+
+                    // Copy all attributes (src, type, defer, etc.)
+                    Array.from(oldScript.attributes).forEach(attr => {
+                        newScript.setAttribute(attr.name, attr.value);
+                    });
+
+                    // Copy inline script content if any
+                    if (oldScript.innerHTML) {
+                        newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    }
+
+                    // Replace the old, unexecuted script with the new, executable one
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+
+                // 5. Trigger lifecycle events to start the SPA
+                window.document.dispatchEvent(new Event('DOMContentLoaded', { bubbles: true, cancelable: true }));
+                window.dispatchEvent(new Event('load'));
 
             } catch (error) {
                 logErrorSecurely('SPA injection failed', error.message);
@@ -137,7 +165,7 @@
             try {
                 const isAvailable = await checkSpaAvailability();
                 if (isAvailable) {
-                    renderNewApp();
+                    await renderNewApp();
                     return true;
                 }
                 return false;
