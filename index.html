@@ -533,9 +533,19 @@
         }
     </script>
     <script>
-        // Prevent FOUC (Flash of Unstyled Content) by applying theme before page renders
+        // Prevent FOUC (Flash of Unstyled Content) by applying theme before page renders.
+        // Default is LIGHT unless the user explicitly saved DARK.
         (function () {
-            if (localStorage.getItem('color-theme') === 'dark' || (!localStorage.getItem('color-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            function getCookie(name) {
+                const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const match = document.cookie.match(new RegExp('(?:^|;\\s*)' + escaped + '=([^;]*)'));
+                return match ? decodeURIComponent(match[1]) : null;
+            }
+
+            const cookieTheme = getCookie('color-theme');
+            const storedTheme = cookieTheme || localStorage.getItem('color-theme');
+
+            if (storedTheme === 'dark') {
                 document.documentElement.classList.add('dark');
             } else {
                 document.documentElement.classList.remove('dark');
@@ -1318,7 +1328,7 @@
                     <img src="https://innovasolutions.com/wp-content/uploads/2025/01/Logo-New.svg" alt="Innova Solutions"
                          class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300 object-contain"
                          width="180" height="60" loading="lazy" decoding="async">
-                    <img src="https://truspeq.com/wp-content/uploads/2022/02/logo.png" alt="Truspeq"
+                    <img src="https://truspeq.com/wp-content/themes/truspeq/assets/images/logo.png" alt="Truspeq"
                          class="h-16 sm:h-20 flex-shrink-0 opacity-70 hover:opacity-100 transition-all duration-300 object-contain"
                          width="180" height="60" loading="lazy" decoding="async">
                     <img src="https://www.openturf.in/wp-content/uploads/2020/04/mlogo@2x.png" alt="Open Turf Technologies"
@@ -2492,36 +2502,91 @@
             return new Promise(resolve => setTimeout(resolve, ms));
         }
 
-        // Function to render the new SPA app via iframe (bypasses CORS)
-        function renderNewApp() {
-            // Hide all existing content
-            document.body.style.overflow = 'hidden';
+        // Function to render the new SPA app via fetch + DOM injection (high-speed alternative)
+        async function renderNewApp() {
+            try {
+                console.log('Fetching SPA content...');
 
-            // Create fullscreen iframe for the new SPA
-            const iframe = document.createElement('iframe');
-            iframe.id = 'spa-frame';
-            iframe.src = spaUrl;
-            iframe.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      border: none;
-      z-index: 999999;
-      background: #fff;
-    `;
+                // Fetch the SPA content
+                const response = await fetch(spaUrl, {
+                    method: 'GET',
+                    cache: 'no-store',
+                    headers: {
+                        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
+                    }
+                });
 
-            // Hide legacy content and show iframe
-            const legacyContent = document.body.children;
-            for (let i = 0; i < legacyContent.length; i++) {
-                if (legacyContent[i].id !== 'spa-frame') {
-                    legacyContent[i].style.display = 'none';
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
-            }
 
-            document.body.appendChild(iframe);
-            console.log('New SPA app rendered in iframe');
+                const htmlContent = await response.text();
+
+                // Create a temporary DOM parser
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(htmlContent, 'text/html');
+
+                // Extract the main content (adjust selector based on actual SPA structure)
+                const mainContent = doc.querySelector('main, .app-container, #app, .content') || doc.body;
+
+                // Hide all existing content
+                document.body.style.overflow = 'hidden';
+                const legacyContent = document.body.children;
+                for (let i = 0; i < legacyContent.length; i++) {
+                    if (legacyContent[i].id !== 'spa-container') {
+                        legacyContent[i].style.display = 'none';
+                    }
+                }
+
+                // Create container for SPA content
+                const spaContainer = document.createElement('div');
+                spaContainer.id = 'spa-container';
+                spaContainer.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100vw;
+                    height: 100vh;
+                    z-index: 999999;
+                    background: #fff;
+                    overflow-y: auto;
+                `;
+
+                // Clone and insert the main content
+                const clonedContent = mainContent.cloneNode(true);
+                spaContainer.appendChild(clonedContent);
+
+                // Insert into body
+                document.body.appendChild(spaContainer);
+
+                // Handle any scripts in the fetched content
+                const scripts = spaContainer.querySelectorAll('script');
+                scripts.forEach(script => {
+                    if (script.src) {
+                        const newScript = document.createElement('script');
+                        newScript.src = script.src;
+                        newScript.async = true;
+                        spaContainer.appendChild(newScript);
+                    } else if (script.textContent.trim()) {
+                        const newScript = document.createElement('script');
+                        newScript.textContent = script.textContent;
+                        spaContainer.appendChild(newScript);
+                    }
+                });
+
+                console.log('New SPA content rendered successfully');
+
+                // Update page title if available
+                const title = doc.title;
+                if (title && title !== document.title) {
+                    document.title = title;
+                }
+
+            } catch (error) {
+                console.error('Failed to render SPA:', error);
+                // Fallback to legacy content
+                renderLegacyContent();
+            }
         }
 
         // Fallback to show existing legacy content (already rendered)
@@ -2590,3 +2655,4 @@
 
 </body>
 </html>
+
